@@ -14,6 +14,9 @@ jobs:
   CI-CD:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
       
       # Set up JDK 17
       - name: Set up JDK 17
