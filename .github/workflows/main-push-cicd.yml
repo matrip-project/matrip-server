@@ -68,3 +68,4 @@ jobs:
             docker stop matrip-server || true
             docker rm matrip-server || true
             docker run -d --name matrip-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/matrip
+            docker image prune -a -f
