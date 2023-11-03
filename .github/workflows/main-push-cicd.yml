@@ -64,8 +64,8 @@ jobs:
           username: ${{ secrets.AWS_EC2_USERNAME }}
           key: ${{ secrets.AWS_EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/matrip
-            docker stop matrip-server || true
-            docker rm matrip-server || true
-            docker run -d --name matrip-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/matrip
-            docker image prune -a -f
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/matrip
+            sudo docker stop matrip-server || true
+            sudo docker rm matrip-server || true
+            sudo docker run -d --name matrip-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/matrip
+            sudo docker image prune -a -f
