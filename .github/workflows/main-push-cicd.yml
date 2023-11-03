@@ -54,3 +54,17 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/matrip .
           docker push ${{ secrets.DOCKER_USERNAME }}/matrip
+
+      # Deploy to AWS EC2
+      - name: Deploy to AWS EC2
+        if: github.event_name == 'push' && contains(github.ref, 'main')
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/matrip
+            docker stop matrip-server || true
+            docker rm matrip-server || true
+            docker run -d --name matrip-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/matrip
