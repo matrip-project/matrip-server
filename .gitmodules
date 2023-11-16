@@ -1,0 +1,3 @@
+[submodule "src/main/resources/matrip-server-security"]
+	path = src/main/resources/matrip-server-security
+	url = https://github.com/matrip-project/matrip-server-security.git
