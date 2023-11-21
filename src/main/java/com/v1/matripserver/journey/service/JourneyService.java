@@ -22,6 +22,7 @@ import com.v1.matripserver.journey.entity.JourneyImg;
 import com.v1.matripserver.journey.repository.JourenyImgRepository;
 import com.v1.matripserver.journey.repository.JourneyRepository;
 import com.v1.matripserver.member.entity.Member;
+import com.v1.matripserver.util.entity.Status;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -109,5 +110,19 @@ public class JourneyService {
             .mid(journey.getMemberId().getId())
             .mName(journey.getMemberId().getName())
             .build();
+    }
+
+    // 동행 게시글 삭제
+    public void deleteJourney(JourneyRequestDto journeyRequestDto){
+
+        try {
+
+            Journey journey = journeyRepository.findById(journeyRequestDto.getMemberId()).get();
+            journey.setStatus(Status.DELETED);
+            journeyRepository.save(journey);
+        }catch (Exception e){
+
+            throw new RuntimeException("" + e.getMessage(), e);
+        }
     }
 }

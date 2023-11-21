@@ -2,6 +2,7 @@ package com.v1.matripserver.journey.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +45,18 @@ public class JourneyController {
         try {
             PageResponseDTO<JourneyResponseDto, Object[]> pageResponseDTO = journeyService.readJourney(pageRequestDTO);
             return new ResponseEntity<>(pageResponseDTO, HttpStatus.OK);
+        }catch (Exception e){
+            log.error("" + e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 동행 게시글 삭제
+    @DeleteMapping("")
+    public ResponseEntity deleteJourney(JourneyRequestDto journeyRequestDto) {
+        try {
+            journeyService.deleteJourney(journeyRequestDto);
+            return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
             log.error("" + e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
