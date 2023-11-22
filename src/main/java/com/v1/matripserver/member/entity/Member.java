@@ -53,4 +53,8 @@ public class Member extends BaseEntity {
         this.auth = auth;
     }
 
+    public int getAge() {
+        return LocalDateTime.now().getYear() - this.birth.getYear();
+    }
+
 }
