@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
@@ -21,17 +23,26 @@ public class Member extends BaseEntity {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
+
+    @Column(name = "birth", nullable = false)
+    private LocalDateTime birth;
 
     // M: male, F: female
     @Column(name = "sex", nullable = false)
     private char sex;
 
-    @Column(name = "age", nullable = false)
-    private int age;
+    @Column(name = "nation", nullable = false)
+    private String nation;
 
-    @Column(name = "intro", nullable = false)
+    @Column(name = "intro")
     private int intro;
 
     @Enumerated(EnumType.STRING)
