@@ -11,6 +11,10 @@ public class JourneyResponseDto {
     private Long id;
     private String title;
     private String content;
+    private String schedule;
+    private Integer count;
+    private float latitude;
+    private float longitude;
     private LocalDateTime created;
     private LocalDateTime updated;
 

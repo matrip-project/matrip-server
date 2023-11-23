@@ -37,6 +37,18 @@ public class Journey extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "schedule", nullable = false)
+    private String schedule;
+
+    @Column(name = "count", nullable = false)
+    private Integer count;
+
+    @Column(name = "latitude", nullable = false)
+    private float latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private float longitude;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
@@ -46,13 +58,23 @@ public class Journey extends BaseEntity {
     private Member memberId;
 
     @Builder
-    private Journey(String title, String content, Member member){
+    private Journey(String title, String content, String schedule, Integer count, float latitude, float longitude, Member member){
         this.title = title;
         this.content = content;
+        this.schedule = schedule;
+        this.count = count;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.memberId = member;
     }
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setContent(String content){
+        this.content = content;
     }
 }

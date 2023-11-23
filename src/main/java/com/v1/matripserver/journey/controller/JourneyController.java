@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,10 +42,23 @@ public class JourneyController {
 
     // 동행 게시글 조회
     @GetMapping("")
-    public ResponseEntity<PageResponseDTO> readJourney(PageRequestDTO pageRequestDTO){
+    public ResponseEntity<PageResponseDTO> readJourneyList(PageRequestDTO pageRequestDTO){
         try {
-            PageResponseDTO<JourneyResponseDto, Object[]> pageResponseDTO = journeyService.readJourney(pageRequestDTO);
+            PageResponseDTO<JourneyResponseDto, Object[]> pageResponseDTO = journeyService.readJourneyList(pageRequestDTO);
             return new ResponseEntity<>(pageResponseDTO, HttpStatus.OK);
+        }catch (Exception e){
+            log.error("" + e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 동행 게시글 상세 조회
+    @GetMapping("")
+    public ResponseEntity<JourneyResponseDto> readJourney(JourneyRequestDto journeyRequestDto){
+        try {
+
+            JourneyResponseDto journeyResponseDto = journeyService.readJourney(journeyRequestDto);
+            return new ResponseEntity<>(journeyResponseDto, HttpStatus.OK);
         }catch (Exception e){
             log.error("" + e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -56,6 +70,18 @@ public class JourneyController {
     public ResponseEntity deleteJourney(JourneyRequestDto journeyRequestDto) {
         try {
             journeyService.deleteJourney(journeyRequestDto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            log.error("" + e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 동행 게시글 수정
+    @PutMapping("")
+    public ResponseEntity updateJourney(JourneyRequestDto journeyRequestDto) {
+        try {
+            journeyService.updateJourney(journeyRequestDto);
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (Exception e){
             log.error("" + e.getMessage(), e);

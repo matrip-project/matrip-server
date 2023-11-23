@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,18 +35,23 @@ public class JourneyService {
 
     private final JourenyImgRepository jourenyImgRepository;
 
-    private final MemberService memberService;
+    //private final MemberService memberService;
 
     // 동행 게시글 작성
     public void createJourney(JourneyRequestDto journeyRequestDto) {
 
-        Member member = memberService.getMember(journeyRequestDto.getMemberId());
+        //Member member = memberService.getMember(journeyRequestDto.getMemberId());
 
         // 메서드로 수정
         Journey journey = Journey.builder()
             .title(journeyRequestDto.getTitle())
             .content(journeyRequestDto.getContent())
-            .member(member).build();
+            .count(journeyRequestDto.getCount())
+            .schedule(journeyRequestDto.getSchedule())
+            .latitude(journeyRequestDto.getLatitude())
+            .longitude(journeyRequestDto.getLongitude())
+            //.member(member)
+            .build();
 
         List<JourneyImg> journeyImgList = new ArrayList<>();
 
@@ -69,10 +73,10 @@ public class JourneyService {
     }
 
     // 동행 게시글 조회
-    public PageResponseDTO<JourneyResponseDto, Object[]> readJourney(PageRequestDTO pageRequestDTO){
+    public PageResponseDTO<JourneyResponseDto, Object[]> readJourneyList(PageRequestDTO pageRequestDTO){
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
 
-        Page<Object []> result = journeyRepository.readJourney(pageable, pageRequestDTO.getKeyword());
+        Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword());
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = (Journey) arr[0];
@@ -104,12 +108,34 @@ public class JourneyService {
             .id(journey.getId())
             .title(journey.getTitle())
             .content(journey.getContent())
+            .count(journey.getCount())
+            .schedule(journey.getSchedule())
+            .latitude(journey.getLatitude())
+            .longitude(journey.getLongitude())
             .journeyImgRequestDtoList(journeyImgRequestDtoList)
             .created(journey.getCreated())
             .updated(journey.getUpdated())
             .mid(journey.getMemberId().getId())
             .mName(journey.getMemberId().getName())
             .build();
+    }
+
+    // 동행 게시글 상세 조회
+    public JourneyResponseDto readJourney(JourneyRequestDto journeyRequestDto){
+
+        Long id = journeyRequestDto.getId();
+        List<Object []> result = journeyRepository.readJourney(id);
+
+        Journey journey = (Journey)result.get(0)[0];
+
+        List<JourneyImg> journeyImgList = new ArrayList<>();
+
+        result.forEach(arr -> {
+            JourneyImg journeyImg = (JourneyImg) arr[1];
+            journeyImgList.add(journeyImg);
+        });
+
+        return entitiesToDTO(journey, journeyImgList);
     }
 
     // 동행 게시글 삭제
@@ -119,6 +145,26 @@ public class JourneyService {
 
             Journey journey = journeyRepository.findById(journeyRequestDto.getMemberId()).get();
             journey.setStatus(Status.DELETED);
+            journeyRepository.save(journey);
+        }catch (Exception e){
+
+            throw new RuntimeException("" + e.getMessage(), e);
+        }
+    }
+    
+    // 동행 게시글 수정
+    public void updateJourney(JourneyRequestDto journeyRequestDto){
+
+        try {
+
+            Journey journey = journeyRepository.findById(journeyRequestDto.getMemberId()).get();
+            if (!journeyRequestDto.getTitle().isEmpty()){
+                journey.setTitle(journeyRequestDto.getTitle());
+            }
+            if (!journeyRequestDto.getContent().isEmpty()){
+                journey.setContent(journeyRequestDto.getContent());
+            }
+
             journeyRepository.save(journey);
         }catch (Exception e){
 
