@@ -1,16 +1,13 @@
 package com.v1.matripserver.member.service;
 
-import com.v1.matripserver.member.dto.RequestDto;
-import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Auth;
 import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.member.repository.MemberRepository;
 import com.v1.matripserver.util.exceptions.BaseResponseStatus;
 import com.v1.matripserver.util.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 import static com.v1.matripserver.member.dto.RequestDto.*;
 
@@ -18,9 +15,14 @@ import static com.v1.matripserver.member.dto.RequestDto.*;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MemberServiceImpl(MemberRepository memberRepository) {
+    public MemberServiceImpl(
+            MemberRepository memberRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,14 +45,14 @@ public class MemberServiceImpl implements MemberService {
     public void createMember(CreateMemberDto createMemberDto) {
 
         if(checkEmailExist(createMemberDto.email()))
-            throw new CustomException(BaseResponseStatus.DUPLICATED_EMAIL, HttpStatus.BAD_REQUEST);
+            throw new CustomException(BaseResponseStatus.DUPLICATED_EMAIL, HttpStatus.CONFLICT);
 
         if(checkNicknameExist(createMemberDto.nickname()))
-            throw new CustomException(BaseResponseStatus.DUPLICATED_NICKNAME, HttpStatus.BAD_REQUEST);
+            throw new CustomException(BaseResponseStatus.DUPLICATED_NICKNAME, HttpStatus.CONFLICT);
 
         Member member = Member.builder()
                 .email(createMemberDto.email())
-                .password(createMemberDto.password())
+                .password(passwordEncoder.encode(createMemberDto.password()))
                 .name(createMemberDto.name())
                 .birth(createMemberDto.birth())
                 .nickname(createMemberDto.nickname())

@@ -21,8 +21,8 @@ public class MemberController {
     }
 
     @Operation(summary = "회원가입")
-    @PostMapping("/member")
-    public ResponseEntity<?> getMember(
+    @PostMapping("/join")
+    public ResponseEntity<?> createMember(
             @Valid
             @RequestBody
             CreateMemberDto createMemberDto
