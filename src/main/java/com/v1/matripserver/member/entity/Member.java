@@ -2,15 +2,14 @@ package com.v1.matripserver.member.entity;
 
 import com.v1.matripserver.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 @Table(name = "member")
@@ -29,21 +28,21 @@ public class Member extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "nickname", nullable = false)
+    @Column(name = "nickname")
     private String nickname;
 
     @Column(name = "birth", nullable = false)
-    private LocalDateTime birth;
+    private LocalDate birth;
 
     // M: male, F: female
-    @Column(name = "sex", nullable = false)
+    @Column(name = "sex")
     private char sex;
 
-    @Column(name = "nation", nullable = false)
+    @Column(name = "nation")
     private String nation;
 
     @Column(name = "intro")
-    private int intro;
+    private String intro;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "auth", nullable = false)
