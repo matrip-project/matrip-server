@@ -5,6 +5,9 @@ import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Auth;
 import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.member.repository.MemberRepository;
+import com.v1.matripserver.util.exceptions.BaseResponseStatus;
+import com.v1.matripserver.util.exceptions.CustomException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,10 +43,10 @@ public class MemberServiceImpl implements MemberService {
     public void createMember(CreateMemberDto createMemberDto) {
 
         if(checkEmailExist(createMemberDto.email()))
-            throw new IllegalStateException("중복된 이메일이 존재합니다.");
+            throw new CustomException(BaseResponseStatus.DUPLICATED_EMAIL, HttpStatus.BAD_REQUEST);
 
         if(checkNicknameExist(createMemberDto.nickname()))
-            throw new IllegalStateException("중복된 닉네임 입니다.");
+            throw new CustomException(BaseResponseStatus.DUPLICATED_NICKNAME, HttpStatus.BAD_REQUEST);
 
         Member member = Member.builder()
                 .email(createMemberDto.email())
