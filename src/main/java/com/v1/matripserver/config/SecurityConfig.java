@@ -43,11 +43,6 @@ public class SecurityConfig{
                         return config;
                     }
                 }))
-                .sessionManagement(sessionManagement ->
-                        sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                                .maximumSessions(1)
-                                .maxSessionsPreventsLogin(false))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, "/login", "/logout", "/join").permitAll()
                         .requestMatchers("/", "/swagger-ui/**", "/api-docs/**").permitAll() //swagger url 허용

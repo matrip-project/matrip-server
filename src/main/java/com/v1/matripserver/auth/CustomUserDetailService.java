@@ -41,11 +41,4 @@ public class CustomUserDetailService implements UserDetailsService {
                 authorities
         );
     }
-
-    @Bean
-    public ServletListenerRegistrationBean<SessionListener> sessionListener() {
-        ServletListenerRegistrationBean<SessionListener> listenerRegBean = new ServletListenerRegistrationBean<>();
-        listenerRegBean.setListener(new SessionListener());
-        return listenerRegBean;
-    }
 }
