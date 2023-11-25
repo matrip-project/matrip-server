@@ -1,13 +1,14 @@
 package com.v1.matripserver.journey.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1.matripserver.journey.dto.JourneyRequestDto;
@@ -29,63 +30,40 @@ public class JourneyController {
 
     // 동행 게시글 작성
     @PostMapping("")
-    public ResponseEntity createJourney(@RequestBody JourneyRequestDto journeyRequestDto){
+    public ResponseEntity<?> createJourney(@RequestBody JourneyRequestDto journeyRequestDto){
 
-        try {
-            journeyService.createJourney(journeyRequestDto);
-            return new ResponseEntity(HttpStatus.OK);
-        }catch (Exception e){
-            log.error("" + e.getMessage(), e);
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        journeyService.createJourney(journeyRequestDto);
+        return ResponseEntity.ok().build();
     }
 
     // 동행 게시글 조회
     @GetMapping("")
-    public ResponseEntity<PageResponseDTO> readJourneyList(PageRequestDTO pageRequestDTO){
-        try {
-            PageResponseDTO<JourneyResponseDto, Object[]> pageResponseDTO = journeyService.readJourneyList(pageRequestDTO);
-            return new ResponseEntity<>(pageResponseDTO, HttpStatus.OK);
-        }catch (Exception e){
-            log.error("" + e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> readJourneyList(PageRequestDTO pageRequestDTO){
+
+        PageResponseDTO<JourneyResponseDto, Object[]> pageResponseDTO = journeyService.readJourneyList(pageRequestDTO);
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     // 동행 게시글 상세 조회
-    @GetMapping("")
-    public ResponseEntity<JourneyResponseDto> readJourney(JourneyRequestDto journeyRequestDto){
-        try {
+    @GetMapping("/{id}")
+    public ResponseEntity<JourneyResponseDto> readJourney(@PathVariable Long id){
 
-            JourneyResponseDto journeyResponseDto = journeyService.readJourney(journeyRequestDto);
-            return new ResponseEntity<>(journeyResponseDto, HttpStatus.OK);
-        }catch (Exception e){
-            log.error("" + e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        JourneyResponseDto journeyResponseDto = journeyService.readJourney(id);
+        return ResponseEntity.ok(journeyResponseDto);
     }
 
     // 동행 게시글 삭제
-    @DeleteMapping("")
-    public ResponseEntity deleteJourney(JourneyRequestDto journeyRequestDto) {
-        try {
-            journeyService.deleteJourney(journeyRequestDto);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (Exception e){
-            log.error("" + e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteJourney(@PathVariable Long id) {
+        journeyService.deleteJourney(id);
+        return ResponseEntity.ok().build();
     }
 
     // 동행 게시글 수정
     @PutMapping("")
-    public ResponseEntity updateJourney(JourneyRequestDto journeyRequestDto) {
-        try {
-            journeyService.updateJourney(journeyRequestDto);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (Exception e){
-            log.error("" + e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> updateJourney(JourneyRequestDto journeyRequestDto) {
+
+        journeyService.updateJourney(journeyRequestDto);
+        return ResponseEntity.ok().build();
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import com.v1.matripserver.journey.entity.JourneyImg;
 import com.v1.matripserver.journey.repository.JourenyImgRepository;
 import com.v1.matripserver.journey.repository.JourneyRepository;
 import com.v1.matripserver.member.entity.Member;
+import com.v1.matripserver.member.service.MemberService;
 import com.v1.matripserver.util.entity.Status;
 
 import lombok.RequiredArgsConstructor;
@@ -35,23 +37,26 @@ public class JourneyService {
 
     private final JourenyImgRepository jourenyImgRepository;
 
-    //private final MemberService memberService;
+    private final MemberService memberService;
 
     // 동행 게시글 작성
     public void createJourney(JourneyRequestDto journeyRequestDto) {
 
-        //Member member = memberService.getMember(journeyRequestDto.getMemberId());
+        Member member = memberService.getMemberById(journeyRequestDto.getMemberId());
 
         // 메서드로 수정
         Journey journey = Journey.builder()
             .title(journeyRequestDto.getTitle())
             .content(journeyRequestDto.getContent())
+            .city(journeyRequestDto.getCity())
             .count(journeyRequestDto.getCount())
             .schedule(journeyRequestDto.getSchedule())
             .latitude(journeyRequestDto.getLatitude())
             .longitude(journeyRequestDto.getLongitude())
-            //.member(member)
+            .member(member)
             .build();
+
+        journey.setStatus(Status.ACTIVE);
 
         List<JourneyImg> journeyImgList = new ArrayList<>();
 
@@ -62,7 +67,7 @@ public class JourneyService {
                 .path(path)
                 .journey(journey)
                 .build();
-            
+            journeyImg.setStatus(Status.ACTIVE);
             journeyImgList.add(journeyImg);
         }
 
@@ -81,13 +86,14 @@ public class JourneyService {
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = (Journey) arr[0];
             JourneyImg journeyImg = (JourneyImg) arr[1];
+            Integer count = ((Long) arr[2]).intValue();
 
             if (journeyImg == null) {
                 // ProductImage가 없는 경우에 대한 처리
-                return entitiesToDTO(journey, Collections.emptyList());
+                return entitiesToDTO(journey, Collections.emptyList(), count);
             } else {
                 // ProductImage가 있는 경우에 대한 처리
-                return entitiesToDTO(journey, Collections.singletonList(journeyImg));
+                return entitiesToDTO(journey, Collections.singletonList(journeyImg), count);
             }
         });
 
@@ -95,7 +101,7 @@ public class JourneyService {
     }
 
     // 검색 결과 반환
-    JourneyResponseDto entitiesToDTO(Journey journey, List<JourneyImg> journeyImgList){
+    JourneyResponseDto entitiesToDTO(Journey journey, List<JourneyImg> journeyImgList, Integer count){
 
         List<JourneyImgRequestDto> journeyImgRequestDtoList = journeyImgList.stream().filter(Objects::nonNull)
             .map(journeyImg -> {
@@ -115,15 +121,15 @@ public class JourneyService {
             .journeyImgRequestDtoList(journeyImgRequestDtoList)
             .created(journey.getCreated())
             .updated(journey.getUpdated())
+            .journeyCount(count)
             .mid(journey.getMemberId().getId())
             .mName(journey.getMemberId().getName())
             .build();
     }
 
     // 동행 게시글 상세 조회
-    public JourneyResponseDto readJourney(JourneyRequestDto journeyRequestDto){
+    public JourneyResponseDto readJourney(Long id){
 
-        Long id = journeyRequestDto.getId();
         List<Object []> result = journeyRepository.readJourney(id);
 
         Journey journey = (Journey)result.get(0)[0];
@@ -135,16 +141,17 @@ public class JourneyService {
             journeyImgList.add(journeyImg);
         });
 
-        return entitiesToDTO(journey, journeyImgList);
+        return entitiesToDTO(journey, journeyImgList, 0);
     }
 
     // 동행 게시글 삭제
-    public void deleteJourney(JourneyRequestDto journeyRequestDto){
+    public void deleteJourney(Long id){
 
         try {
 
-            Journey journey = journeyRepository.findById(journeyRequestDto.getMemberId()).get();
+            Journey journey = journeyRepository.findById(id).get();
             journey.setStatus(Status.DELETED);
+
             journeyRepository.save(journey);
         }catch (Exception e){
 

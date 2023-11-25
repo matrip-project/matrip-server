@@ -1,6 +1,5 @@
 package com.v1.matripserver.journey.entity;
 
-import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.util.entity.BaseEntity;
 import com.v1.matripserver.util.entity.Status;
 

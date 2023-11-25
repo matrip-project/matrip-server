@@ -12,12 +12,12 @@ import com.v1.matripserver.journey.entity.Journey;
 public interface JourneyRepository extends JpaRepository<Journey, Long> {
 
     // 상품 정보를 가지고 상품 이미지 정보와 댓글의 개수를 구해주는 메서드 페이지 단위로 구하기
-    @Query("select j, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
-        " where j.status = 'ACTIVE' and (:keyword is null or j.title like %:keyword%) group by j")
+    @Query("select j, ji, count(j) from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
+        " where j.status = 'ACTIVE' and ji.status = 'ACTIVE' and (:keyword is null or j.title like %:keyword%) group by j")
     Page<Object[]> readJourneyList(Pageable pageable, String keyword);
 
     // 하나의 상품 아이디를 가지고 상품 이미지 정보와 댓글의 개수를 구해주는 메서드
     @Query("select j, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
-        " where j.status = 'ACTIVE' and j = :id group by j")
+        " where j.status = 'ACTIVE' and ji.status = 'ACTIVE' and j.id = :id group by j")
     List<Object[]> readJourney(Long id);
 }

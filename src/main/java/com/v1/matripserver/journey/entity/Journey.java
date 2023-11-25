@@ -37,6 +37,9 @@ public class Journey extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "city", nullable = false)
+    private String city;
+
     @Column(name = "schedule", nullable = false)
     private String schedule;
 
@@ -58,9 +61,10 @@ public class Journey extends BaseEntity {
     private Member memberId;
 
     @Builder
-    private Journey(String title, String content, String schedule, Integer count, float latitude, float longitude, Member member){
+    private Journey(String title, String content, String city, String schedule, Integer count, float latitude, float longitude, Member member){
         this.title = title;
         this.content = content;
+        this.city = city;
         this.schedule = schedule;
         this.count = count;
         this.latitude = latitude;

@@ -44,9 +44,8 @@ public class SecurityConfig{
                     }
                 }))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.POST, "/login", "/logout", "/join").permitAll()
-                        .requestMatchers("/", "/swagger-ui/**", "/api-docs/**").permitAll() //swagger url 허용
-                        .anyRequest().authenticated()
+                    .requestMatchers("/**").permitAll() // 테스트용 모든 접근 허용
+                    .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
