@@ -8,6 +8,7 @@ import com.v1.matripserver.util.exceptions.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import static com.v1.matripserver.member.dto.RequestDto.*;
 
@@ -47,7 +48,7 @@ public class MemberServiceImpl implements MemberService {
         if(checkEmailExist(createMemberDto.email()))
             throw new CustomException(BaseResponseStatus.DUPLICATED_EMAIL, HttpStatus.CONFLICT);
 
-        if(checkNicknameExist(createMemberDto.nickname()))
+        if(checkNicknameExist(createMemberDto.nickname()) && StringUtils.hasText(createMemberDto.nickname()))
             throw new CustomException(BaseResponseStatus.DUPLICATED_NICKNAME, HttpStatus.CONFLICT);
 
         Member member = Member.builder()
