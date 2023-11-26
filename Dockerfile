@@ -10,4 +10,4 @@ ARG CONTAINER_JAR_FILE=matrip-server.jar
 COPY ${JAR_FILE} /app/${CONTAINER_JAR_FILE}
 
 # Spring Boot를 실행하기 위한 entry point 지정
-ENTRYPOINT ["java", "-jar", "/app/matrip-server.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "/app/matrip-server.jar"]
