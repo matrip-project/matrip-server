@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.v1.matripserver.journey.dto.JourneyRequestDto;
 import com.v1.matripserver.journey.dto.JourneyResponseDto;
+import com.v1.matripserver.journey.dto.JourneyUpdateRequestDto;
 import com.v1.matripserver.journey.dto.PageRequestDTO;
 import com.v1.matripserver.journey.dto.PageResponseDTO;
 import com.v1.matripserver.journey.service.JourneyService;
@@ -61,9 +62,9 @@ public class JourneyController {
 
     // 동행 게시글 수정
     @PutMapping("")
-    public ResponseEntity<?> updateJourney(JourneyRequestDto journeyRequestDto) {
+    public ResponseEntity<?> updateJourney(@RequestBody JourneyUpdateRequestDto journeyUpdateRequestDto) {
 
-        journeyService.updateJourney(journeyRequestDto);
+        journeyService.updateJourney(journeyUpdateRequestDto);
         return ResponseEntity.ok().build();
     }
 }

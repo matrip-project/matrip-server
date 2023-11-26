@@ -3,17 +3,18 @@ package com.v1.matripserver.journey.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.v1.matripserver.util.entity.Status;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class JourneyRequestDto {
+public class JourneyUpdateRequestDto {
 
     private Long id;
     private String title;
@@ -24,6 +25,7 @@ public class JourneyRequestDto {
     private Integer count;
     private float latitude;
     private float longitude;
+    private Status status;
     private Long memberId;
 
     private List<JourneyImgRequestDto> journeyImgRequestDtoList;
