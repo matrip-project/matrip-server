@@ -1,5 +1,7 @@
 package com.v1.matripserver.journey.entity;
 
+import java.time.LocalDate;
+
 import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.util.entity.BaseEntity;
 import com.v1.matripserver.util.entity.Status;
@@ -40,8 +42,11 @@ public class Journey extends BaseEntity {
     @Column(name = "city", nullable = false)
     private String city;
 
-    @Column(name = "schedule", nullable = false)
-    private String schedule;
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
 
     @Column(name = "count", nullable = false)
     private Integer count;
@@ -61,11 +66,13 @@ public class Journey extends BaseEntity {
     private Member memberId;
 
     @Builder
-    private Journey(String title, String content, String city, String schedule, Integer count, float latitude, float longitude, Member member){
+    private Journey(Long id, String title, String content, String city, LocalDate startDate, LocalDate endDate, Integer count, float latitude, float longitude, Member member){
+        this.id = id;
         this.title = title;
         this.content = content;
         this.city = city;
-        this.schedule = schedule;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.count = count;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -75,10 +82,5 @@ public class Journey extends BaseEntity {
     public void setStatus(Status status) {
         this.status = status;
     }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public void setContent(String content){
-        this.content = content;
-    }
+
 }
