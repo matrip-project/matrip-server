@@ -1,5 +1,6 @@
 package com.v1.matripserver.journey.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +87,18 @@ public class JourneyService {
     public PageResponseDTO<JourneyResponseDto, Object[]> readJourneyList(PageRequestDTO pageRequestDTO){
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
 
-        Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword());
+        int startYear = 0;
+        int endYear = 0;
+
+        if (pageRequestDTO.getAge() != null){
+            endYear = LocalDate.now().getYear() - pageRequestDTO.getAge();
+            startYear = endYear - 9;
+        }
+
+        // 검색할 시작 연도와 끝 연도 계산
+        Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(), pageRequestDTO.getCity(),
+            pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), Status.ACTIVE,
+            /*pageRequestDTO.getSex(),*/ startYear, endYear);
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = (Journey) arr[0];
@@ -175,6 +187,7 @@ public class JourneyService {
 
             // 동행 게시글 처리
             List<Object []> result = journeyRepository.readJourney(journeyUpdateRequestDto.getId());
+            Member member = memberService.getMemberById(journeyUpdateRequestDto.getMemberId());
 
             Journey journey = Journey.builder()
                 .id(journeyUpdateRequestDto.getId())
@@ -186,6 +199,7 @@ public class JourneyService {
                 .count(journeyUpdateRequestDto.getCount())
                 .longitude(journeyUpdateRequestDto.getLongitude())
                 .latitude(journeyUpdateRequestDto.getLatitude())
+                .member(member)
                 .build();
             journey.setStatus(journeyUpdateRequestDto.getStatus());
 
