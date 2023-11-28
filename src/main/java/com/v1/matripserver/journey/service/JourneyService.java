@@ -1,10 +1,10 @@
 package com.v1.matripserver.journey.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.v1.matripserver.journey.dto.JourneyImgRequestDto;
 import com.v1.matripserver.journey.dto.JourneyRequestDto;
 import com.v1.matripserver.journey.dto.JourneyResponseDto;
+import com.v1.matripserver.journey.dto.JourneyUpdateRequestDto;
 import com.v1.matripserver.journey.dto.PageRequestDTO;
 import com.v1.matripserver.journey.dto.PageResponseDTO;
 import com.v1.matripserver.journey.entity.Journey;
@@ -44,13 +45,15 @@ public class JourneyService {
 
         Member member = memberService.getMemberById(journeyRequestDto.getMemberId());
 
-        // 메서드로 수정
+        // 메서드로 수정이 필요
+        // 동행 게시글 저장
         Journey journey = Journey.builder()
             .title(journeyRequestDto.getTitle())
             .content(journeyRequestDto.getContent())
             .city(journeyRequestDto.getCity())
             .count(journeyRequestDto.getCount())
-            .schedule(journeyRequestDto.getSchedule())
+            .startDate(journeyRequestDto.getStartDate())
+            .endDate(journeyRequestDto.getEndDate())
             .latitude(journeyRequestDto.getLatitude())
             .longitude(journeyRequestDto.getLongitude())
             .member(member)
@@ -58,20 +61,23 @@ public class JourneyService {
 
         journey.setStatus(Status.ACTIVE);
 
+        journeyRepository.save(journey);
+
+        // 동행 게시글 이미지 저장
         List<JourneyImg> journeyImgList = new ArrayList<>();
 
-        for (String path : journeyRequestDto.getImagePathList()){
+        for (JourneyImgRequestDto journeyImgRequestDto : journeyRequestDto.getJourneyImgRequestDtoList()){
 
             // 메서드로 수정
             JourneyImg journeyImg = JourneyImg.builder()
-                .path(path)
+                .path(journeyImgRequestDto.getPath())
                 .journey(journey)
+                .sequence(journeyImgRequestDto.getSequence())
                 .build();
             journeyImg.setStatus(Status.ACTIVE);
             journeyImgList.add(journeyImg);
         }
 
-        journeyRepository.save(journey);
         if (!journeyImgList.isEmpty()){
             jourenyImgRepository.saveAll(journeyImgList);
         }
@@ -81,7 +87,18 @@ public class JourneyService {
     public PageResponseDTO<JourneyResponseDto, Object[]> readJourneyList(PageRequestDTO pageRequestDTO){
         Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
 
-        Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword());
+        int startYear = 0;
+        int endYear = 0;
+
+        if (pageRequestDTO.getAge() != null){
+            endYear = LocalDate.now().getYear() - pageRequestDTO.getAge();
+            startYear = endYear - 9;
+        }
+
+        // 검색할 시작 연도와 끝 연도 계산
+        Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(), pageRequestDTO.getCity(),
+            pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), Status.ACTIVE,
+             startYear, endYear);
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = (Journey) arr[0];
@@ -106,7 +123,9 @@ public class JourneyService {
         List<JourneyImgRequestDto> journeyImgRequestDtoList = journeyImgList.stream().filter(Objects::nonNull)
             .map(journeyImg -> {
                 return JourneyImgRequestDto.builder()
+                    .id(journeyImg.getId())
                     .path(journeyImg.getPath())
+                    .sequence(journeyImg.getSequence())
                     .build();
             }).toList();
 
@@ -115,12 +134,14 @@ public class JourneyService {
             .title(journey.getTitle())
             .content(journey.getContent())
             .count(journey.getCount())
-            .schedule(journey.getSchedule())
+            .city(journey.getCity())
+            .startDate(journey.getStartDate())
+            .endDate(journey.getEndDate())
             .latitude(journey.getLatitude())
             .longitude(journey.getLongitude())
             .journeyImgRequestDtoList(journeyImgRequestDtoList)
-            .created(journey.getCreated())
-            .updated(journey.getUpdated())
+            .createDt(journey.getCreated())
+            .updateDt(journey.getUpdated())
             .journeyCount(count)
             .mid(journey.getMemberId().getId())
             .mName(journey.getMemberId().getName())
@@ -160,19 +181,82 @@ public class JourneyService {
     }
     
     // 동행 게시글 수정
-    public void updateJourney(JourneyRequestDto journeyRequestDto){
+    public void updateJourney(JourneyUpdateRequestDto journeyUpdateRequestDto){
 
         try {
 
-            Journey journey = journeyRepository.findById(journeyRequestDto.getMemberId()).get();
-            if (!journeyRequestDto.getTitle().isEmpty()){
-                journey.setTitle(journeyRequestDto.getTitle());
-            }
-            if (!journeyRequestDto.getContent().isEmpty()){
-                journey.setContent(journeyRequestDto.getContent());
-            }
+            // 동행 게시글 처리
+            List<Object []> result = journeyRepository.readJourney(journeyUpdateRequestDto.getId());
+            Member member = memberService.getMemberById(journeyUpdateRequestDto.getMemberId());
+
+            Journey journey = Journey.builder()
+                .id(journeyUpdateRequestDto.getId())
+                .title(journeyUpdateRequestDto.getTitle())
+                .content(journeyUpdateRequestDto.getContent())
+                .city(journeyUpdateRequestDto.getCity())
+                .startDate(journeyUpdateRequestDto.getStartDate())
+                .endDate(journeyUpdateRequestDto.getEndDate())
+                .count(journeyUpdateRequestDto.getCount())
+                .longitude(journeyUpdateRequestDto.getLongitude())
+                .latitude(journeyUpdateRequestDto.getLatitude())
+                .member(member)
+                .build();
+            journey.setStatus(journeyUpdateRequestDto.getStatus());
 
             journeyRepository.save(journey);
+
+            // 이미지 처리
+            List<JourneyImgRequestDto> journeyImgRequestDtoList =  journeyUpdateRequestDto.getJourneyImgRequestDtoList();
+
+            List<JourneyImg> journeyImgList = new ArrayList<>();
+
+            result.forEach(arr -> {
+                JourneyImg journeyImg = (JourneyImg) arr[1];
+                journeyImgList.add(journeyImg);
+            });
+
+            for (int i=0; i<journeyImgRequestDtoList.size(); i++) {
+
+
+                JourneyImgRequestDto journeyImgRequestDto = journeyImgRequestDtoList.get(i);
+
+                // 사진을 기존보다 더 추가하게 될 때 구분.
+                if (i < journeyImgList.size()) {
+
+                    JourneyImg journeyImg = journeyImgList.get(i);
+
+                    // 이미지 순서 혹은 위치가 다르다면
+                    if (!journeyImg.getPath().equals(journeyImgRequestDto.getPath())){
+
+                        // 이미지 삭제 처리
+                        journeyImg.setStatus(Status.DELETED);
+                        journeyImgList.set(i, journeyImg);
+
+                        // 이미지 추가
+                        journeyImg = JourneyImg.builder()
+                            .path(journeyImgRequestDto.getPath())
+                            .journey(journey)
+                            .sequence(journeyImgRequestDto.getSequence())
+                            .build();
+                        journeyImg.setStatus(Status.ACTIVE);
+
+                        journeyImgList.add(journeyImg);
+                    }
+                } else {
+                    // 이미지 추가
+                    JourneyImg journeyImg = JourneyImg.builder()
+                        .path(journeyImgRequestDto.getPath())
+                        .journey(journey)
+                        .sequence(journeyImgRequestDto.getSequence())
+                        .build();
+                    journeyImg.setStatus(Status.ACTIVE);
+
+                    journeyImgList.add(journeyImg);
+                }
+
+            }
+
+            jourenyImgRepository.saveAll(journeyImgList);
         }catch (Exception e){
 
             throw new RuntimeException("" + e.getMessage(), e);

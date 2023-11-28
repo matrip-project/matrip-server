@@ -33,6 +33,9 @@ public class JourneyImg extends BaseEntity {
     @Column(name = "path", nullable = false)
     private String path;
 
+    @Column(name="sequence", nullable = false)
+    private Integer sequence;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private Status status;
@@ -42,9 +45,11 @@ public class JourneyImg extends BaseEntity {
     private Journey journeyId;
 
     @Builder
-    private JourneyImg(String path, Journey journey){
+    private JourneyImg(Long id, String path, Journey journey, Integer sequence){
+        this.id = id;
         this.path = path;
         this.journeyId = journey;
+        this.sequence = sequence;
     }
 
     public void setStatus(Status status) {

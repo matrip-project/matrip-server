@@ -1,5 +1,6 @@
 package com.v1.matripserver.journey.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,12 +19,13 @@ public class JourneyResponseDto {
     private String title;
     private String city;
     private String content;
-    private String schedule;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Integer count;
     private float latitude;
     private float longitude;
-    private LocalDateTime created;
-    private LocalDateTime updated;
+    private LocalDateTime createDt;
+    private LocalDateTime updateDt;
     private Integer journeyCount;
     // 등록한 사용자 관련
     private Long mid;
