@@ -37,9 +37,6 @@ public class PageRequestDTO {
     // 여행 상태 여부
     private String status;
 
-    // 성별
-    private char sex;
-
     // 나이
     private Integer age;
 
@@ -51,7 +48,6 @@ public class PageRequestDTO {
         startDate=null;
         endDate=null;
         status= "ACTIVE";
-        sex='\0';
         age=null;
     }
 

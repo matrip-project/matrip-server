@@ -98,7 +98,7 @@ public class JourneyService {
         // 검색할 시작 연도와 끝 연도 계산
         Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(), pageRequestDTO.getCity(),
             pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), Status.ACTIVE,
-            /*pageRequestDTO.getSex(),*/ startYear, endYear);
+             startYear, endYear);
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = (Journey) arr[0];

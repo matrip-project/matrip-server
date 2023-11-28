@@ -20,12 +20,11 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
         + " and (:city is null or j.city = :city)"
         + " and j.status = :journeyStatus"
         + " and ((:startDate is null and :endDate is null) or (j.startDate <= :startDate and j.endDate >= :endDate))"
-        + " and j.memberId.status = :journeyImgStatus"/*
-        + " and (:sex = '\0' or j.memberId.sex = :sex)"*/
+        + " and j.memberId.status = :journeyImgStatus"
         + " and ((:startYear=0 and :endYear=0) or (YEAR (j.memberId.birth) BETWEEN :startYear and :endYear))"
         + " group by j")
     Page<Object[]> readJourneyList(Pageable pageable, String keyword, String city,
-        LocalDate startDate, LocalDate endDate, Status journeyStatus, Status journeyImgStatus/*, char sex*/, Integer startYear, Integer endYear);
+        LocalDate startDate, LocalDate endDate, Status journeyStatus, Status journeyImgStatus, Integer startYear, Integer endYear);
 
     // 하나의 동행 게시글 아이디를 가지고 이미지 정보를 구해주는 메서드
     @Query("select j, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
