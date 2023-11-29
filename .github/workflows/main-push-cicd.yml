@@ -73,5 +73,5 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/matrip
             sudo docker stop matrip-server || true
             sudo docker rm matrip-server || true
-            sudo docker run -d --name matrip-server -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/matrip
+            sudo docker run -d --name matrip-server -p 80:80 ${{ secrets.DOCKER_USERNAME }}/matrip
             sudo docker image prune -a -f
