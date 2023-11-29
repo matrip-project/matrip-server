@@ -101,9 +101,19 @@ public class JourneyService {
              startYear, endYear);
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
-            Journey journey = (Journey) arr[0];
-            JourneyImg journeyImg = (JourneyImg) arr[1];
-            Integer count = ((Long) arr[2]).intValue();
+            Journey journey = Journey.builder()
+                .id((Long) arr[0])
+                .title((String) arr[1])
+                .city((String) arr[2])
+                .status((Status) arr[3])
+                .startDate((LocalDate) arr[4])
+                .endDate((LocalDate) arr[5])
+                .member((Member) arr[6])
+                .build();
+
+            JourneyImg journeyImg = (JourneyImg) arr[7];
+
+            Integer count = ((Long) arr[8]).intValue();
 
             if (journeyImg == null) {
                 // ProductImage가 없는 경우에 대한 처리
@@ -143,8 +153,11 @@ public class JourneyService {
             .createDt(journey.getCreated())
             .updateDt(journey.getUpdated())
             .journeyCount(count)
-            .mid(journey.getMemberId().getId())
-            .mName(journey.getMemberId().getName())
+            .memberId(journey.getMemberId().getId())
+            .memberEmail(journey.getMemberId().getEmail())
+            .memberName(journey.getMemberId().getName())
+            .memberAge(journey.getMemberId().getAge())
+            .memberSex(journey.getMemberId().getSex())
             .build();
     }
 
