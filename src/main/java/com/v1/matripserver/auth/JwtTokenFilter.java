@@ -6,7 +6,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,11 +17,15 @@ import java.io.IOException;
 import java.util.List;
 
 // OncePerRequestFilter : 매번 들어갈 때 마다 체크 해주는 필터
-@RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final MemberService memberService;
     private final String secretKey;
+
+    public JwtTokenFilter(MemberService memberService, String secretKey) {
+        this.memberService = memberService;
+        this.secretKey = secretKey;
+    }
 
     @Override
     protected void doFilterInternal(

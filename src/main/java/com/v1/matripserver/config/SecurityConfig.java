@@ -33,11 +33,6 @@ public class SecurityConfig{
     private static String secretKey = "test001";
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http
