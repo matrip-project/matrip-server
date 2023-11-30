@@ -275,4 +275,8 @@ public class JourneyService {
             throw new RuntimeException("" + e.getMessage(), e);
         }
     }
+
+    public Journey findJourney(Long id){
+        return journeyRepository.findById(id).get();
+    }
 }

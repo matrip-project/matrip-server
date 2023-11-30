@@ -16,6 +16,7 @@ public class CommentRequestDto {
     private Long id;
     private String content;
     private boolean secret;
+    private Long parentId;
     private Long journeyId;
     private Long memberId;
 }
