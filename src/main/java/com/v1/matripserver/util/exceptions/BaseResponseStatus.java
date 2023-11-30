@@ -9,6 +9,9 @@ public enum BaseResponseStatus {
     // ----- Success Response -----
     SUCCESS(true, HttpStatus.OK.value(), "요청에 성공하였습니다."),
 
+    // ----- Login Response -----
+    LOGIN_FAILED(false, HttpStatus.EXPECTATION_FAILED.value(), "로그인에 실패했습니다."),
+
     // ----- Common Responses -----
     COMMON_NOT_FOUND(false, HttpStatus.NOT_FOUND.value(), "정보를 가져오는데 실패하였습니다."),
     COMMON_CREATE_FAILED(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "생성에 실패하였습니다."),

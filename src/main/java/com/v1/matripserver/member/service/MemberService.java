@@ -12,6 +12,10 @@ public interface MemberService {
 
     Member getMemberById(Long memberId);
 
-    void createMember(CreateMemberDto createMemberDto);
+    Member getMemberByEmail(String email);
+
+    void join(JoinDto joinDto);
+
+    String login(LoginDto loginDto);
 
 }

@@ -66,11 +66,12 @@ public class Journey extends BaseEntity {
     private Member memberId;
 
     @Builder
-    private Journey(Long id, String title, String content, String city, LocalDate startDate, LocalDate endDate, Integer count, float latitude, float longitude, Member member){
+    private Journey(Long id, String title, String content, String city, Status status, LocalDate startDate, LocalDate endDate, Integer count, float latitude, float longitude, Member member){
         this.id = id;
         this.title = title;
         this.content = content;
         this.city = city;
+        this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
         this.count = count;

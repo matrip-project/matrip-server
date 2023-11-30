@@ -27,9 +27,14 @@ public class JourneyResponseDto {
     private LocalDateTime createDt;
     private LocalDateTime updateDt;
     private Integer journeyCount;
+
     // 등록한 사용자 관련
-    private Long mid;
-    private String mName;
+    private Long memberId;
+    private String memberEmail;
+    private String memberName;
+    private Integer memberAge;
+    private char memberSex;
+
 
     private List<JourneyImgRequestDto> journeyImgRequestDtoList;
 }

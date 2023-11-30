@@ -14,7 +14,7 @@ import com.v1.matripserver.util.entity.Status;
 public interface JourneyRepository extends JpaRepository<Journey, Long> {
 
     // 동행 정보를 가지고 상품 이미지 정보(한 개)와 댓글의 개수를 구해주는 메서드 페이지 단위로 구하기
-    @Query("select j, ji, count(j.id) from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
+    @Query("select j.id, j.title, j.city, j.status, j.startDate, j.endDate, j.memberId, ji, count(j.id) from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
         " where ji.status = :journeyImgStatus and ji.sequence = 0"
         + " and (:keyword is null or j.title like %:keyword%)"
         + " and (:city is null or j.city = :city)"
