@@ -24,14 +24,9 @@ public class CommentController {
     
     // 댓글 작성
     @PostMapping("")
-    public ResponseEntity createComment(CommentRequestDto commentRequestDto){
+    public ResponseEntity<?> createComment(CommentRequestDto commentRequestDto){
 
-        try {
-            commentService.createComment(commentRequestDto);
-            return new ResponseEntity(HttpStatus.OK);
-        }catch (Exception e){
-            log.error("" + e.getMessage(), e);
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        commentService.createComment(commentRequestDto);
+        return ResponseEntity.ok().build();
     }
 }

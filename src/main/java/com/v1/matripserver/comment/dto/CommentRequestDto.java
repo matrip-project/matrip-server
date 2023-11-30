@@ -15,8 +15,7 @@ public class CommentRequestDto {
 
     private Long id;
     private String content;
-
-    // 멤버 및 게시글 추가 필요
+    private boolean secret;
     private Long journeyId;
     private Long memberId;
 }
