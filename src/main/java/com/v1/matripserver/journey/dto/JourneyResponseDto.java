@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.v1.matripserver.util.entity.Status;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +21,7 @@ public class JourneyResponseDto {
     private String title;
     private String city;
     private String content;
+    private Status status;
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer count;

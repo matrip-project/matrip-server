@@ -27,9 +27,17 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
         LocalDate startDate, LocalDate endDate, Status journeyStatus, Status journeyImgStatus, Integer startYear, Integer endYear);
 
     // 하나의 동행 게시글 아이디를 가지고 이미지 정보를 구해주는 메서드
-    @Query("select j, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j" +
-        " where j.status = 'ACTIVE' and ji.status = 'ACTIVE' and j.id = :id order by ji.sequence asc")
+    @Query("select j, ji, count(c.id) from Journey j"
+        + " left outer join JourneyImg ji on ji.journeyId = j"
+        + " left outer join Comment c on c.journeyId = j"
+        + " left join c.parentId p"
+        + " where j.status = 'ACTIVE' and (ji is null or (ji is not null and ji.status = 'ACTIVE')) and j.id = :id"
+        + " and (c is null or (c is not null and c.status = 'ACTIVE'))"
+        + " and (p is null or (p is not null and p.status = 'ACTIVE'))"
+        + " group by j, ji"
+        + " order by ji.sequence asc")
     List<Object[]> readJourney(Long id);
+
 
     // 마이페이지 작성한 글 조회
     @Query("select j.id, j.title, j.city, j.status, j.startDate, j.endDate, j.memberId, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j"
