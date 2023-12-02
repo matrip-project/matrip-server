@@ -60,6 +60,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void updateMember(Long memberId, UpdateMemberDto updateMemberDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        if (updateMemberDto.nickname() != null) {
+            member.setNickname(updateMemberDto.nickname().isEmpty() ? null : updateMemberDto.nickname());
+        }
+        if (updateMemberDto.intro() != null) {
+            member.setIntro(updateMemberDto.intro());
+        }
+
+        memberRepository.save(member);
+    }
+
+    @Override
     @Transactional
     public void join(JoinDto joinDto) {
 

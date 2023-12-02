@@ -1,5 +1,6 @@
 package com.v1.matripserver.member.service;
 
+import com.v1.matripserver.member.dto.RequestDto;
 import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Member;
 
@@ -16,6 +17,8 @@ public interface MemberService {
     Member getMemberByEmail(String email);
 
     ResponseDto.MemberDto getMyPageById(Long memberId);
+
+    void updateMember(Long memberId, RequestDto.UpdateMemberDto updateMemberDto);
 
     void join(JoinDto joinDto);
 

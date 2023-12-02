@@ -2,7 +2,6 @@ package com.v1.matripserver.member.controller;
 
 import com.v1.matripserver.member.dto.RequestDto;
 import com.v1.matripserver.member.dto.ResponseDto;
-import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,4 +48,15 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMyPageById(memberId));
     }
 
+    @Operation(summary = "사용자 정보 수정")
+    @PutMapping("/member/{memberId}")
+    public ResponseEntity<?> updateMember (
+            @PathVariable
+            Long memberId,
+            @RequestBody
+            RequestDto.UpdateMemberDto updateMemberDto
+    ) {
+        memberService.updateMember(memberId, updateMemberDto);
+        return ResponseEntity.ok().build();
+    }
 }

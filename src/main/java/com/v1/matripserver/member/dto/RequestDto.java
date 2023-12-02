@@ -20,7 +20,9 @@ public class RequestDto {
             String name,
             @DateTimeFormat(pattern = "yyyy-MM-dd")
             LocalDate birth,
-            String nickname
+            String nickname,
+            char sex,
+            String nation
     ) {}
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -29,6 +31,12 @@ public class RequestDto {
             String email,
             @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,16}$", message = "비밀번호 입력값이 형식에 맞지 않습니다.")
             String password
+    ) {}
+
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public record UpdateMemberDto(
+            String nickname,
+            String intro
     ) {}
 
 }

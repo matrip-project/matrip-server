@@ -52,10 +52,17 @@ public class Member extends BaseEntity {
 
     @OneToMany
     private List<MemberLink> memberLinkList = new ArrayList<>();
-    
+
     @OneToMany
     private List<MemberProfile> memberProfileList = new ArrayList<>();
 
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
 
     public void setAuth(Auth auth) {
         this.auth = auth;
