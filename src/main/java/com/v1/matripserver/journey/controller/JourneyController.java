@@ -1,5 +1,7 @@
 package com.v1.matripserver.journey.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,5 +67,12 @@ public class JourneyController {
 
         journeyService.updateJourney(journeyUpdateRequestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/mypage")
+    public ResponseEntity<?> myPageReadJourney(Long memberId) {
+
+        List<JourneyResponseDto> journeyResponseDtoList = journeyService.myPageReadJourney(memberId);
+        return ResponseEntity.ok(journeyResponseDtoList);
     }
 }
