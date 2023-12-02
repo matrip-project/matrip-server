@@ -10,7 +10,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "member_profile")
-public class MemberProfile extends BaseEntity {
+public class MemberProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)

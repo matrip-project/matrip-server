@@ -10,7 +10,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "member_link")
-public class MemberLink extends BaseEntity {
+public class MemberLink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
