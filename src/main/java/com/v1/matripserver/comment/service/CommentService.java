@@ -141,4 +141,13 @@ public class CommentService {
             throw new RuntimeException("" + e.getMessage(), e);
         }
     }
+
+    // 댓글 수정
+    public void updateComment(CommentRequestDto commentRequestDto){
+
+        Comment comment = commentRepository.findById(commentRequestDto.getId()).get();
+        comment.setContent(commentRequestDto.getContent());
+
+        commentRepository.save(comment);
+    }
 }
