@@ -127,4 +127,18 @@ public class CommentService {
             .memberEmail(member.getEmail())
             .build();
     }
+
+    // 댓글 삭제
+    public void deleteComment(Long id){
+
+        try {
+            Comment comment = commentRepository.findById(id).get();
+            comment.setStatus(Status.DELETED);
+
+            commentRepository.save(comment);
+        }catch (Exception e){
+
+            throw new RuntimeException("" + e.getMessage(), e);
+        }
+    }
 }
