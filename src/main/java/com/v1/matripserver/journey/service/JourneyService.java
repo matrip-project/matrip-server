@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.v1.matripserver.comment.service.CommentService;
 import com.v1.matripserver.journey.dto.JourneyImgRequestDto;
 import com.v1.matripserver.journey.dto.JourneyRequestDto;
 import com.v1.matripserver.journey.dto.JourneyResponseDto;
@@ -145,6 +146,7 @@ public class JourneyService {
             .content(journey.getContent())
             .count(journey.getCount())
             .city(journey.getCity())
+            .status(journey.getStatus())
             .startDate(journey.getStartDate())
             .endDate(journey.getEndDate())
             .latitude(journey.getLatitude())
@@ -167,6 +169,7 @@ public class JourneyService {
         List<Object []> result = journeyRepository.readJourney(id);
 
         Journey journey = (Journey)result.get(0)[0];
+        Integer commentCount = Math.toIntExact((Long)result.get(0)[2]);
 
         List<JourneyImg> journeyImgList = new ArrayList<>();
 
@@ -175,7 +178,7 @@ public class JourneyService {
             journeyImgList.add(journeyImg);
         });
 
-        return entitiesToDTO(journey, journeyImgList, 0);
+        return entitiesToDTO(journey, journeyImgList, commentCount);
     }
 
     // 동행 게시글 삭제
