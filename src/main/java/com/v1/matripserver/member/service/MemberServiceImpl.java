@@ -75,7 +75,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public ResponseDto.loginDto login(LoginDto loginDto) {
+    public ResponseDto.LoginDto login(LoginDto loginDto) {
         Member member = memberRepository.findByEmail(loginDto.email())
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
 
@@ -89,7 +89,7 @@ public class MemberServiceImpl implements MemberService {
 
         String jwtToken = JwtTokenUtil.createToken(member.getEmail(), secretKey, expireTimeMs);
 
-        return new ResponseDto.loginDto(
+        return new ResponseDto.LoginDto(
                 jwtToken,
                 member.getId(),
                 member.getName(),

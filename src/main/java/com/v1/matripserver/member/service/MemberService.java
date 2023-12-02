@@ -17,6 +17,6 @@ public interface MemberService {
 
     void join(JoinDto joinDto);
 
-    ResponseDto.loginDto login(LoginDto loginDto);
+    ResponseDto.LoginDto login(LoginDto loginDto);
 
 }
