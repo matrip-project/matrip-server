@@ -2,7 +2,9 @@ package com.v1.matripserver.comment.dto;
 
 import java.time.LocalDateTime;
 
+import com.v1.matripserver.journey.entity.Journey;
 import com.v1.matripserver.member.entity.Member;
+import com.v1.matripserver.util.entity.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +21,10 @@ public class CommentResponseDto {
 
     private Long id;
     private String content;
+    private boolean secret;
     private LocalDateTime createAt;
-    private LocalDateTime updateAt;
 
-    private Member member;
+    private Long memberId;
+    private String memberName;
+    private String memberEmail;
 }

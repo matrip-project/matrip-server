@@ -1,6 +1,7 @@
 package com.v1.matripserver.member.service;
 
 import com.v1.matripserver.auth.JwtTokenUtil;
+import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Auth;
 import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.member.repository.MemberRepository;
@@ -74,22 +75,25 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String login(LoginDto loginDto) {
+    public ResponseDto.loginDto login(LoginDto loginDto) {
         Member member = memberRepository.findByEmail(loginDto.email())
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
 
-        String loginPassword = passwordEncoder.encode(loginDto.password());
-
-        if (!member.getPassword().equals(loginPassword))
+        if (!passwordEncoder.matches(loginDto.password(), member.getPassword()))
             throw new CustomException(BaseResponseStatus.LOGIN_FAILED, HttpStatus.EXPECTATION_FAILED);
 
         // 로그인 성공 => Jwt Token 발급
 
-        String secretKey = "my-secret-key-123123";
+        String secretKey = "test001";
         long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
 
         String jwtToken = JwtTokenUtil.createToken(member.getEmail(), secretKey, expireTimeMs);
 
-        return jwtToken;
+        return new ResponseDto.loginDto(
+                jwtToken,
+                member.getId(),
+                member.getName(),
+                member.getAuth()
+        );
     }
 }
