@@ -94,4 +94,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "사용자 소셜 링크 삭제")
+    @DeleteMapping("/link/{linkId}")
+    public ResponseEntity<?> deleteLink (
+            @PathVariable
+            Long linkId
+    ) {
+        memberService.deleteLink(linkId);
+        return ResponseEntity.ok().build();
+    }
+
 }

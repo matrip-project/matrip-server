@@ -28,4 +28,6 @@ public interface MemberService {
     void addLink(Long memberId, AddLinkDto addLinkDto);
 
     void deleteProfile(Long profileId);
+
+    void deleteLink(Long linkId);
 }

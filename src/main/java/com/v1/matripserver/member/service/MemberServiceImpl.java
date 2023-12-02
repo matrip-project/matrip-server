@@ -163,4 +163,12 @@ public class MemberServiceImpl implements MemberService {
         memberProfileRepository.delete(memberProfile);
     }
 
+    @Override
+    public void deleteLink(Long linkId) {
+        MemberLink memberLink = memberLinkRepository.findById(linkId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 소셜 링크 입니다."));
+
+        memberLinkRepository.delete(memberLink);
+    }
+
 }
