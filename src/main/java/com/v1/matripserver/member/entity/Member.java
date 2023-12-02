@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -47,6 +49,20 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "auth", nullable = false)
     private Auth auth;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberLink> memberLinkList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberProfile> memberProfileList = new ArrayList<>();
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
 
     public void setAuth(Auth auth) {
         this.auth = auth;

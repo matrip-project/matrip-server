@@ -1,13 +1,12 @@
 package com.v1.matripserver.member.entity;
 
+import com.v1.matripserver.util.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 @Table(name = "member_profile")
