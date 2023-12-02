@@ -20,7 +20,9 @@ public class RequestDto {
             String name,
             @DateTimeFormat(pattern = "yyyy-MM-dd")
             LocalDate birth,
-            String nickname
+            String nickname,
+            char sex,
+            String nation
     ) {}
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -31,4 +33,17 @@ public class RequestDto {
             String password
     ) {}
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public record UpdateMemberDto(
+            String nickname,
+            String intro
+    ) {}
+
+    public record AddProfileDto(
+            String path
+    ) {}
+
+    public record AddLinkDto (
+            String path
+    ) {}
 }
