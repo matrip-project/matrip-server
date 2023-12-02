@@ -1,6 +1,7 @@
 package com.v1.matripserver.member.service;
 
 import com.v1.matripserver.auth.JwtTokenUtil;
+import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Auth;
 import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.member.repository.MemberRepository;
@@ -74,7 +75,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String login(LoginDto loginDto) {
+    public ResponseDto.loginDto login(LoginDto loginDto) {
         Member member = memberRepository.findByEmail(loginDto.email())
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
 
@@ -88,6 +89,11 @@ public class MemberServiceImpl implements MemberService {
 
         String jwtToken = JwtTokenUtil.createToken(member.getEmail(), secretKey, expireTimeMs);
 
-        return jwtToken;
+        return new ResponseDto.loginDto(
+                jwtToken,
+                member.getId(),
+                member.getName(),
+                member.getAuth()
+        );
     }
 }

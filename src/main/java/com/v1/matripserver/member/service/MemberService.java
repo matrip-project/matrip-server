@@ -1,5 +1,6 @@
 package com.v1.matripserver.member.service;
 
+import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Member;
 
 import static com.v1.matripserver.member.dto.RequestDto.*;
@@ -16,6 +17,6 @@ public interface MemberService {
 
     void join(JoinDto joinDto);
 
-    String login(LoginDto loginDto);
+    ResponseDto.loginDto login(LoginDto loginDto);
 
 }

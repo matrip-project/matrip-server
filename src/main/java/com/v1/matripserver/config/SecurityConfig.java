@@ -56,7 +56,7 @@ public class SecurityConfig{
                 }))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/**").permitAll() // 테스트용 모든 접근 허용
-//                                .requestMatchers("/login").permitAll()
+//                        .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(memberService, secretKey), UsernamePasswordAuthenticationFilter.class)
