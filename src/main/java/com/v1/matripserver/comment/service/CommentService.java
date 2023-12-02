@@ -1,10 +1,14 @@
 package com.v1.matripserver.comment.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.v1.matripserver.comment.dto.CommentRequestDto;
+import com.v1.matripserver.comment.dto.CommentResponseDto;
 import com.v1.matripserver.comment.entity.Comment;
 import com.v1.matripserver.comment.repository.CommentRepository;
 import com.v1.matripserver.journey.entity.Journey;
@@ -63,5 +67,64 @@ public class CommentService {
         comment.setStatus(Status.ACTIVE);
 
         commentRepository.save(comment);
+    }
+
+    // 댓글 조회
+    public List<CommentResponseDto> readComment(CommentRequestDto commentRequestDto){
+
+        Long journeyId = commentRequestDto.getJourneyId();
+        List<Comment> commentList = commentRepository.readComment(journeyId);
+        // 게시글 작성자
+        Long journeyWriterId = commentList.get(0).getJourneyId().getMemberId().getId();
+        log.info("journeyWriterId: " + journeyWriterId);
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        CommentResponseDto commentResponseDto;
+
+        for (Comment comment: commentList){
+            // 댓글 작성자
+            Long commentWriterId = null;
+            if (comment.getParentId() != null){
+                commentWriterId = comment.getParentId().getMemberId().getId();
+            }else{
+                commentWriterId = comment.getMemberId().getId();
+            }
+
+            // 비밀 댓글일 때
+            if (comment.isSecret()){
+                // 댓글 작성자 혹은 게시글 작성자일 때
+                log.info(comment.getId() + " " + commentWriterId);
+                if (commentWriterId.equals(commentRequestDto.getMemberId()) || journeyWriterId.equals(commentRequestDto.getMemberId()) ){
+                    commentResponseDto = entityToDto(comment.getId(), comment.getContent(),
+                        comment.isSecret(), comment.getCreated(), comment.getMemberId());
+                // 제 3자일 때
+                }else{
+                    commentResponseDto = entityToDto(comment.getId(), "비밀 댓글 입니다.",
+                        comment.isSecret(), comment.getCreated(), comment.getMemberId());
+                }
+
+            }
+            // 비밀 댓글이 아닐 때
+            else{
+                commentResponseDto = entityToDto(comment.getId(), comment.getContent(),
+                    comment.isSecret(), comment.getCreated(), comment.getMemberId());
+            }
+
+            commentResponseDtoList.add(commentResponseDto);
+        }
+
+        return commentResponseDtoList;
+    }
+
+    private CommentResponseDto entityToDto(Long id, String content, boolean secret, LocalDateTime createAt, Member member){
+
+        return CommentResponseDto.builder()
+            .id(id)
+            .content(content)
+            .secret(secret)
+            .createAt(createAt)
+            .memberId(member.getId())
+            .memberName(member.getName())
+            .memberEmail(member.getEmail())
+            .build();
     }
 }

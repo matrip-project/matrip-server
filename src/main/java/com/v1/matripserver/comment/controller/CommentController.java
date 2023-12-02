@@ -32,4 +32,12 @@ public class CommentController {
         commentService.createComment(commentRequestDto);
         return ResponseEntity.ok().build();
     }
+
+    // 댓글 조회
+    @GetMapping("")
+    public ResponseEntity<?> readComment(CommentRequestDto commentRequestDto) {
+
+        List<CommentResponseDto> commentResponseDtoList = commentService.readComment(commentRequestDto);
+        return ResponseEntity.ok(commentResponseDtoList);
+    }
 }
