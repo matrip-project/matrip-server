@@ -154,4 +154,13 @@ public class MemberServiceImpl implements MemberService {
                 .build());
     }
 
+    @Override
+    @Transactional
+    public void deleteProfile(Long profileId) {
+        MemberProfile memberProfile = memberProfileRepository.findById(profileId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 프로필 사진 입니다."));
+
+        memberProfileRepository.delete(memberProfile);
+    }
+
 }

@@ -72,6 +72,16 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "사용자 프로필 사진 삭제")
+    @DeleteMapping("/profile/{profileId}")
+    public ResponseEntity<?> deleteProfile (
+            @PathVariable
+            Long profileId
+    ) {
+        memberService.deleteProfile(profileId);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "사용자 소셜 링크 추가")
     @PostMapping("/member/{memberId}/link")
     public ResponseEntity<?> addLink (
