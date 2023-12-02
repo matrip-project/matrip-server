@@ -41,7 +41,6 @@ public class SecurityConfig{
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 정책 추가
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
@@ -57,6 +56,7 @@ public class SecurityConfig{
                 }))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/**").permitAll() // 테스트용 모든 접근 허용
+//                                .requestMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtTokenFilter(memberService, secretKey), UsernamePasswordAuthenticationFilter.class)

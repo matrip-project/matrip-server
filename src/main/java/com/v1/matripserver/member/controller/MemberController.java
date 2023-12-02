@@ -37,7 +37,6 @@ public class MemberController {
             @RequestBody
             RequestDto.LoginDto loginDto
     ) {
-//        return ResponseEntity.ok(memberService.login(loginDto));
-        return ResponseEntity.ok(loginDto.email());
+        return ResponseEntity.ok(memberService.login(loginDto));
     }
 }
