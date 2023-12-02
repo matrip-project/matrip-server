@@ -1,5 +1,6 @@
 package com.v1.matripserver.member.entity;
 
+import com.v1.matripserver.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "member_link")
-public class MemberLink {
+public class MemberLink extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
