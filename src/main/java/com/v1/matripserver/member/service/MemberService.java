@@ -15,6 +15,8 @@ public interface MemberService {
 
     Member getMemberByEmail(String email);
 
+    ResponseDto.MemberDto getMyPageById(Long memberId);
+
     void join(JoinDto joinDto);
 
     ResponseDto.LoginDto login(LoginDto loginDto);

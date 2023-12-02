@@ -42,10 +42,11 @@ public class MemberController {
 
     @Operation(summary = "사용자 정보 조회")
     @GetMapping("/member/{memberId}")
-    public  ResponseEntity<Member> getMember(
+    public ResponseEntity<ResponseDto.MemberDto> getMember (
             @PathVariable
             Long memberId
     ) {
-        return ResponseEntity.ok(memberService.getMemberById(memberId));
+        return ResponseEntity.ok(memberService.getMyPageById(memberId));
     }
+
 }

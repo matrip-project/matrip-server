@@ -52,6 +52,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public ResponseDto.MemberDto getMyPageById(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        return ResponseDto.MemberDto.from(member);
+    }
+
+    @Override
     @Transactional
     public void join(JoinDto joinDto) {
 
