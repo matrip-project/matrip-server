@@ -1,6 +1,7 @@
 package com.v1.matripserver.member.controller;
 
 import com.v1.matripserver.member.dto.RequestDto;
+import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,12 +33,11 @@ public class MemberController {
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
-    public ResponseEntity<String> login (
+    public ResponseEntity<ResponseDto.loginDto> login (
             @Valid
             @RequestBody
             RequestDto.LoginDto loginDto
     ) {
-//        return ResponseEntity.ok(memberService.login(loginDto));
-        return ResponseEntity.ok(loginDto.email());
+        return ResponseEntity.ok(memberService.login(loginDto));
     }
 }
