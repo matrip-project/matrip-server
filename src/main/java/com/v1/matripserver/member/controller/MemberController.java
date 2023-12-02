@@ -66,12 +66,22 @@ public class MemberController {
             @PathVariable
             Long memberId,
             @RequestBody
-            RequestDto.CreateProfileDto createProfileDto
+            RequestDto.AddProfileDto addProfileDto
     ) {
-        memberService.addProfile(memberId, createProfileDto);
+        memberService.addProfile(memberId, addProfileDto);
         return ResponseEntity.ok().build();
     }
 
-
+    @Operation(summary = "사용자 소셜 링크 추가")
+    @PostMapping("/member/{memberId}/link")
+    public ResponseEntity<?> addLink (
+            @PathVariable
+            Long memberId,
+            @RequestBody
+            RequestDto.AddLinkDto addLinkDto
+    ) {
+        memberService.addLink(memberId, addLinkDto);
+        return ResponseEntity.ok().build();
+    }
 
 }

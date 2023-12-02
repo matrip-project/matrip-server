@@ -39,8 +39,11 @@ public class RequestDto {
             String intro
     ) {}
 
-    public record CreateProfileDto (
+    public record AddProfileDto(
             String path
-    ) {
-    }
+    ) {}
+
+    public record AddLinkDto (
+            String path
+    ) {}
 }

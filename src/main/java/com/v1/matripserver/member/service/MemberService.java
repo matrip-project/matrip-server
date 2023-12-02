@@ -8,6 +8,10 @@ import static com.v1.matripserver.member.dto.RequestDto.*;
 
 public interface MemberService {
 
+    void join(JoinDto joinDto);
+
+    ResponseDto.LoginDto login(LoginDto loginDto);
+
     boolean checkEmailExist(String email);
 
     boolean checkNicknameExist(String nickname);
@@ -19,10 +23,8 @@ public interface MemberService {
     ResponseDto.MemberDto getMyPageById(Long memberId);
 
     void updateMember(Long memberId, RequestDto.UpdateMemberDto updateMemberDto);
-    void addProfile(Long memberId, CreateProfileDto createProfileDto);
+    void addProfile(Long memberId, AddProfileDto addProfileDto);
 
-    void join(JoinDto joinDto);
-
-    ResponseDto.LoginDto login(LoginDto loginDto);
+    void addLink(Long memberId, AddLinkDto addLinkDto);
 
 }

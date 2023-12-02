@@ -4,7 +4,9 @@ import com.v1.matripserver.auth.JwtTokenUtil;
 import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Auth;
 import com.v1.matripserver.member.entity.Member;
+import com.v1.matripserver.member.entity.MemberLink;
 import com.v1.matripserver.member.entity.MemberProfile;
+import com.v1.matripserver.member.repository.MemberLinkRepository;
 import com.v1.matripserver.member.repository.MemberProfileRepository;
 import com.v1.matripserver.member.repository.MemberRepository;
 import com.v1.matripserver.util.exceptions.BaseResponseStatus;
@@ -23,14 +25,64 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final MemberProfileRepository memberProfileRepository;
+    private final MemberLinkRepository memberLinkRepository;
 
     public MemberServiceImpl(
             PasswordEncoder passwordEncoder,
             MemberRepository memberRepository,
-            MemberProfileRepository memberProfileRepository) {
+            MemberProfileRepository memberProfileRepository,
+            MemberLinkRepository memberLinkRepository
+    ) {
         this.passwordEncoder = passwordEncoder;
         this.memberRepository = memberRepository;
         this.memberProfileRepository = memberProfileRepository;
+        this.memberLinkRepository = memberLinkRepository;
+    }
+
+    @Override
+    @Transactional
+    public void join(JoinDto joinDto) {
+
+        if(checkEmailExist(joinDto.email()))
+            throw new CustomException(BaseResponseStatus.DUPLICATED_EMAIL, HttpStatus.CONFLICT);
+
+        if(checkNicknameExist(joinDto.nickname()) && StringUtils.hasText(joinDto.nickname()))
+            throw new CustomException(BaseResponseStatus.DUPLICATED_NICKNAME, HttpStatus.CONFLICT);
+
+        Member member = Member.builder()
+                .email(joinDto.email())
+                .password(passwordEncoder.encode(joinDto.password()))
+                .name(joinDto.name())
+                .birth(joinDto.birth())
+                .nickname(joinDto.nickname())
+                .build();
+
+        member.setAuth(Auth.USER);
+
+        memberRepository.save(member);
+    }
+
+    @Override
+    public ResponseDto.LoginDto login(LoginDto loginDto) {
+        Member member = memberRepository.findByEmail(loginDto.email())
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
+
+        if (!passwordEncoder.matches(loginDto.password(), member.getPassword()))
+            throw new CustomException(BaseResponseStatus.LOGIN_FAILED, HttpStatus.EXPECTATION_FAILED);
+
+        // 로그인 성공 => Jwt Token 발급
+
+        String secretKey = "test001";
+        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
+
+        String jwtToken = JwtTokenUtil.createToken(member.getEmail(), secretKey, expireTimeMs);
+
+        return new ResponseDto.LoginDto(
+                jwtToken,
+                member.getId(),
+                member.getName(),
+                member.getAuth()
+        );
     }
 
     @Override
@@ -80,59 +132,26 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void addProfile(Long memberId, CreateProfileDto createProfileDto) {
+    public void addProfile(Long memberId, AddProfileDto addProfileDto) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
 
         memberProfileRepository.save(MemberProfile.builder()
                 .member(member)
-                .path(createProfileDto.path())
+                .path(addProfileDto.path())
                 .build());
     }
 
     @Override
     @Transactional
-    public void join(JoinDto joinDto) {
+    public void addLink(Long memberId, AddLinkDto addLinkDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
 
-        if(checkEmailExist(joinDto.email()))
-            throw new CustomException(BaseResponseStatus.DUPLICATED_EMAIL, HttpStatus.CONFLICT);
-
-        if(checkNicknameExist(joinDto.nickname()) && StringUtils.hasText(joinDto.nickname()))
-            throw new CustomException(BaseResponseStatus.DUPLICATED_NICKNAME, HttpStatus.CONFLICT);
-
-        Member member = Member.builder()
-                .email(joinDto.email())
-                .password(passwordEncoder.encode(joinDto.password()))
-                .name(joinDto.name())
-                .birth(joinDto.birth())
-                .nickname(joinDto.nickname())
-                .build();
-
-        member.setAuth(Auth.USER);
-
-        memberRepository.save(member);
+        memberLinkRepository.save(MemberLink.builder()
+                .member(member)
+                .path(addLinkDto.path())
+                .build());
     }
 
-    @Override
-    public ResponseDto.LoginDto login(LoginDto loginDto) {
-        Member member = memberRepository.findByEmail(loginDto.email())
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
-
-        if (!passwordEncoder.matches(loginDto.password(), member.getPassword()))
-            throw new CustomException(BaseResponseStatus.LOGIN_FAILED, HttpStatus.EXPECTATION_FAILED);
-
-        // 로그인 성공 => Jwt Token 발급
-
-        String secretKey = "test001";
-        long expireTimeMs = 1000 * 60 * 60;     // Token 유효 시간 = 60분
-
-        String jwtToken = JwtTokenUtil.createToken(member.getEmail(), secretKey, expireTimeMs);
-
-        return new ResponseDto.LoginDto(
-                jwtToken,
-                member.getId(),
-                member.getName(),
-                member.getAuth()
-        );
-    }
 }
