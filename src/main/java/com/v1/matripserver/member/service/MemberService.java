@@ -19,6 +19,7 @@ public interface MemberService {
     ResponseDto.MemberDto getMyPageById(Long memberId);
 
     void updateMember(Long memberId, RequestDto.UpdateMemberDto updateMemberDto);
+    void addProfile(Long memberId, CreateProfileDto createProfileDto);
 
     void join(JoinDto joinDto);
 

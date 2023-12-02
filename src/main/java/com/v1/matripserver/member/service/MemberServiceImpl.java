@@ -4,6 +4,8 @@ import com.v1.matripserver.auth.JwtTokenUtil;
 import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Auth;
 import com.v1.matripserver.member.entity.Member;
+import com.v1.matripserver.member.entity.MemberProfile;
+import com.v1.matripserver.member.repository.MemberProfileRepository;
 import com.v1.matripserver.member.repository.MemberRepository;
 import com.v1.matripserver.util.exceptions.BaseResponseStatus;
 import com.v1.matripserver.util.exceptions.CustomException;
@@ -18,15 +20,17 @@ import static com.v1.matripserver.member.dto.RequestDto.*;
 @Service
 public class MemberServiceImpl implements MemberService {
 
-    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final MemberProfileRepository memberProfileRepository;
 
     public MemberServiceImpl(
+            PasswordEncoder passwordEncoder,
             MemberRepository memberRepository,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.memberRepository = memberRepository;
+            MemberProfileRepository memberProfileRepository) {
         this.passwordEncoder = passwordEncoder;
+        this.memberRepository = memberRepository;
+        this.memberProfileRepository = memberProfileRepository;
     }
 
     @Override
@@ -72,6 +76,18 @@ public class MemberServiceImpl implements MemberService {
         }
 
         memberRepository.save(member);
+    }
+
+    @Override
+    @Transactional
+    public void addProfile(Long memberId, CreateProfileDto createProfileDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        memberProfileRepository.save(MemberProfile.builder()
+                .member(member)
+                .path(createProfileDto.path())
+                .build());
     }
 
     @Override

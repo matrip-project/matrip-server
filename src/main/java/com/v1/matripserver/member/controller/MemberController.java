@@ -59,4 +59,19 @@ public class MemberController {
         memberService.updateMember(memberId, updateMemberDto);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "사용자 프로필 사진 추가")
+    @PostMapping("/member/{memberId}/profile")
+    public ResponseEntity<?> addProfile (
+            @PathVariable
+            Long memberId,
+            @RequestBody
+            RequestDto.CreateProfileDto createProfileDto
+    ) {
+        memberService.addProfile(memberId, createProfileDto);
+        return ResponseEntity.ok().build();
+    }
+
+
+
 }

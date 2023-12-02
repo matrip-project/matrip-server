@@ -39,4 +39,8 @@ public class RequestDto {
             String intro
     ) {}
 
+    public record CreateProfileDto (
+            String path
+    ) {
+    }
 }
