@@ -98,7 +98,7 @@ public class JourneyService {
         // 검색할 시작 연도와 끝 연도 계산
         Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(), pageRequestDTO.getCity(),
             pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), Status.ACTIVE,
-             startYear, endYear);
+            startYear, endYear);
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = Journey.builder()
@@ -192,7 +192,7 @@ public class JourneyService {
             throw new RuntimeException("" + e.getMessage(), e);
         }
     }
-    
+
     // 동행 게시글 수정
     public void updateJourney(JourneyUpdateRequestDto journeyUpdateRequestDto){
 
@@ -274,5 +274,9 @@ public class JourneyService {
 
             throw new RuntimeException("" + e.getMessage(), e);
         }
+    }
+
+    public Journey findJourney(Long id){
+        return journeyRepository.findById(id).get();
     }
 }
