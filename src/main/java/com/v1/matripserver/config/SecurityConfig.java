@@ -21,8 +21,10 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.savedrequest.RequestCacheAwareFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Collections;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Configuration
@@ -39,13 +41,17 @@ public class SecurityConfig{
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 정책 추가
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(Collections.singletonList("*"));
-                        config.setAllowedMethods(Collections.singletonList("*"));
+
                         config.setAllowCredentials(true);
-                        config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setAllowedOrigins(List.of("http://localhost:3000","http://localhost:80"));
+                        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+                        config.setAllowedHeaders(List.of("*"));
+                        config.setExposedHeaders(List.of("*"));
+
                         return config;
                     }
                 }))
