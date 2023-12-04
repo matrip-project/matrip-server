@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.v1.matripserver.comment.service.CommentService;
 import com.v1.matripserver.journey.dto.JourneyImgRequestDto;
 import com.v1.matripserver.journey.dto.JourneyRequestDto;
 import com.v1.matripserver.journey.dto.JourneyResponseDto;

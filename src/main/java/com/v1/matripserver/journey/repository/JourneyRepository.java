@@ -18,7 +18,7 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
         " where ji.status = :journeyImgStatus and ji.sequence = 0"
         + " and (:keyword is null or j.title like %:keyword%)"
         + " and (:city is null or j.city = :city)"
-        + " and j.status = :journeyStatus"
+        + " and ((:journeyStatus is null and (j.status = 'ACTIVE' or j.status = 'CLOSED')) or j.status = :journeyStatus)"
         + " and ((:startDate is null and :endDate is null) or (j.startDate <= :startDate and j.endDate >= :endDate))"
         + " and j.memberId.status = :journeyImgStatus"
         + " and ((:startYear=0 and :endYear=0) or (YEAR (j.memberId.birth) BETWEEN :startYear and :endYear))"
@@ -31,7 +31,7 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
         + " left outer join JourneyImg ji on ji.journeyId = j"
         + " left outer join Comment c on c.journeyId = j"
         + " left join c.parentId p"
-        + " where j.status = 'ACTIVE' and (ji is null or (ji is not null and ji.status = 'ACTIVE')) and j.id = :id"
+        + " where (j.status = 'ACTIVE' or j.status = 'CLOSED') and (ji is null or (ji is not null and ji.status = 'ACTIVE')) and j.id = :id"
         + " and (c is null or (c is not null and c.status = 'ACTIVE'))"
         + " and (p is null or (p is not null and p.status = 'ACTIVE'))"
         + " group by j, ji"
@@ -41,7 +41,7 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
 
     // 마이페이지 작성한 글 조회
     @Query("select j.id, j.title, j.city, j.status, j.startDate, j.endDate, j.memberId, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j"
-        + " where j.memberId.id = :memberId and j.status = 'ACTIVE'"
+        + " where j.memberId.id = :memberId and (j.status = 'ACTIVE' or j.status = 'CLOSED')"
         + " group by j")
     List<Object[]> readMyPageJourney(Long memberId);
 }
