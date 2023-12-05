@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.v1.matripserver.comment.service.CommentService;
 import com.v1.matripserver.journey.dto.JourneyImgRequestDto;
 import com.v1.matripserver.journey.dto.JourneyRequestDto;
 import com.v1.matripserver.journey.dto.JourneyResponseDto;
@@ -98,8 +97,7 @@ public class JourneyService {
 
         // 검색할 시작 연도와 끝 연도 계산
         Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(), pageRequestDTO.getCity(),
-            pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), Status.ACTIVE,
-            startYear, endYear);
+            pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), startYear, endYear);
 
         Function<Object [], JourneyResponseDto> fn = (arr -> {
             Journey journey = Journey.builder()
