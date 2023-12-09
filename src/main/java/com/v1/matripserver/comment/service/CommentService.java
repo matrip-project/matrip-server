@@ -79,6 +79,7 @@ public class CommentService {
         Long commentWriterId;
         Long journeyWriterId = null;
         CommentResponseDto commentResponseDto;
+        Long parentId = null;
         
         
         // 게시글 작성자
@@ -93,6 +94,7 @@ public class CommentService {
             // 댓글 작성자
             if (comment.getParentId() != null){
                 commentWriterId = comment.getParentId().getMemberId().getId();
+                parentId = comment.getParentId().getId();
             }else{
                 commentWriterId = comment.getMemberId().getId();
             }
@@ -103,18 +105,18 @@ public class CommentService {
                 log.info(comment.getId() + " " + commentWriterId);
                 if (commentWriterId.equals(commentRequestDto.getMemberId()) || journeyWriterId.equals(commentRequestDto.getMemberId()) ){
                     commentResponseDto = entityToDto(comment.getId(), comment.getContent(),
-                        comment.isSecret(), comment.getCreated(), comment.getMemberId());
+                        comment.isSecret(), comment.getCreated(), parentId, comment.getMemberId());
                 // 제 3자일 때
                 }else{
                     commentResponseDto = entityToDto(comment.getId(), "비밀 댓글 입니다.",
-                        comment.isSecret(), comment.getCreated(), comment.getMemberId());
+                        comment.isSecret(), comment.getCreated(), parentId, comment.getMemberId());
                 }
 
             }
             // 비밀 댓글이 아닐 때
             else{
                 commentResponseDto = entityToDto(comment.getId(), comment.getContent(),
-                    comment.isSecret(), comment.getCreated(), comment.getMemberId());
+                    comment.isSecret(), comment.getCreated(), parentId, comment.getMemberId());
             }
 
             commentResponseDtoList.add(commentResponseDto);
@@ -123,13 +125,14 @@ public class CommentService {
         return commentResponseDtoList;
     }
 
-    private CommentResponseDto entityToDto(Long id, String content, boolean secret, LocalDateTime createAt, Member member){
+    private CommentResponseDto entityToDto(Long id, String content, boolean secret, LocalDateTime createAt, Long parentId, Member member){
 
         return CommentResponseDto.builder()
             .id(id)
             .content(content)
             .secret(secret)
             .createAt(createAt)
+            .parentId(parentId)
             .memberId(member.getId())
             .memberName(member.getName())
             .memberEmail(member.getEmail())
