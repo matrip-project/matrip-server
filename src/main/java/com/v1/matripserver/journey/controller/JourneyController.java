@@ -75,4 +75,11 @@ public class JourneyController {
         List<JourneyResponseDto> journeyResponseDtoList = journeyService.myPageReadJourney(memberId);
         return ResponseEntity.ok(journeyResponseDtoList);
     }
+
+    @GetMapping("/interest")
+    public ResponseEntity<?> interestReadJourney(Long memberId) {
+
+        List<JourneyResponseDto> journeyResponseDtoList = journeyService.interestReadJourney(memberId);
+        return ResponseEntity.ok(journeyResponseDtoList);
+    }
 }

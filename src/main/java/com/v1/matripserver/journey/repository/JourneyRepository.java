@@ -44,4 +44,13 @@ public interface JourneyRepository extends JpaRepository<Journey, Long> {
         + " where j.memberId.id = :memberId and (j.status = 'ACTIVE' or j.status = 'CLOSED')"
         + " group by j")
     List<Object[]> readMyPageJourney(Long memberId);
+
+    // 마이페이지 관심 동행 목록 조회
+    @Query("select j.id, j.title, j.city, j.status, j.startDate, j.endDate, j.memberId, ji from Journey j left outer join JourneyImg ji on ji.journeyId = j"
+        + " left outer join Comment c on j.id = c.journeyId.id"
+        + " where (j.status = 'ACTIVE' or j.status = 'CLOSED')"
+        + " and c.memberId.id = :memberId"
+        + " group by j")
+    List<Object[]> readInterestJourney(Long memberId);
+
 }
