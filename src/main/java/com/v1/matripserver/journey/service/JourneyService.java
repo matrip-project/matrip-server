@@ -41,7 +41,7 @@ public class JourneyService {
     private final MemberService memberService;
 
     // 동행 게시글 작성
-    public void createJourney(JourneyRequestDto journeyRequestDto) {
+    public Long createJourney(JourneyRequestDto journeyRequestDto) {
 
         Member member = memberService.getMemberById(journeyRequestDto.getMemberId());
 
@@ -81,6 +81,8 @@ public class JourneyService {
         if (!journeyImgList.isEmpty()){
             jourenyImgRepository.saveAll(journeyImgList);
         }
+
+        return journey.getId();
     }
 
     // 동행 게시글 조회
@@ -284,6 +286,37 @@ public class JourneyService {
     public List<JourneyResponseDto> myPageReadJourney(Long memberId){
 
         List<Object[]> result = journeyRepository.readMyPageJourney(memberId);
+
+        List<JourneyResponseDto> journeyResponseDtoList = new ArrayList<>();
+
+        for (Object[] arr : result){
+            Journey journey = Journey.builder()
+                .id((Long) arr[0])
+                .title((String) arr[1])
+                .city((String) arr[2])
+                .status((Status) arr[3])
+                .startDate((LocalDate) arr[4])
+                .endDate((LocalDate) arr[5])
+                .member((Member) arr[6])
+                .build();
+
+            JourneyImg journeyImg = (JourneyImg) arr[7];
+
+            if (journeyImg == null) {
+                // ProductImage가 없는 경우에 대한 처리
+                journeyResponseDtoList.add(entitiesToDTO(journey, Collections.emptyList(), 0));
+            } else {
+                // ProductImage가 있는 경우에 대한 처리
+                journeyResponseDtoList.add(entitiesToDTO(journey, Collections.singletonList(journeyImg), 0));
+            }
+        }
+
+        return journeyResponseDtoList;
+    }
+
+    public List<JourneyResponseDto> interestReadJourney(Long memberId) {
+
+        List<Object[]> result = journeyRepository.readInterestJourney(memberId);
 
         List<JourneyResponseDto> journeyResponseDtoList = new ArrayList<>();
 

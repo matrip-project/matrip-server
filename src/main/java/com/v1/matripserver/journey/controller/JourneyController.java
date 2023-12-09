@@ -34,8 +34,8 @@ public class JourneyController {
     @PostMapping("")
     public ResponseEntity<?> createJourney(@RequestBody JourneyRequestDto journeyRequestDto){
 
-        journeyService.createJourney(journeyRequestDto);
-        return ResponseEntity.ok().build();
+        Long journeyId = journeyService.createJourney(journeyRequestDto);
+        return ResponseEntity.ok(journeyId);
     }
 
     // 동행 게시글 조회
@@ -73,6 +73,13 @@ public class JourneyController {
     public ResponseEntity<?> myPageReadJourney(Long memberId) {
 
         List<JourneyResponseDto> journeyResponseDtoList = journeyService.myPageReadJourney(memberId);
+        return ResponseEntity.ok(journeyResponseDtoList);
+    }
+
+    @GetMapping("/interest")
+    public ResponseEntity<?> interestReadJourney(Long memberId) {
+
+        List<JourneyResponseDto> journeyResponseDtoList = journeyService.interestReadJourney(memberId);
         return ResponseEntity.ok(journeyResponseDtoList);
     }
 }
