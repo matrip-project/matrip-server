@@ -74,15 +74,23 @@ public class CommentService {
 
         Long journeyId = commentRequestDto.getJourneyId();
         List<Comment> commentList = commentRepository.readComment(journeyId);
-        // 게시글 작성자
-        Long journeyWriterId = commentList.get(0).getJourneyId().getMemberId().getId();
-        log.info("journeyWriterId: " + journeyWriterId);
-        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        
+        // 변수 선언
+        Long commentWriterId;
+        Long journeyWriterId = null;
         CommentResponseDto commentResponseDto;
+        
+        
+        // 게시글 작성자
+        // 댓글이 존재할 때
+        if (!commentList.isEmpty()){
+            journeyWriterId = commentList.get(0).getJourneyId().getMemberId().getId();    
+        }
+
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
         for (Comment comment: commentList){
             // 댓글 작성자
-            Long commentWriterId = null;
             if (comment.getParentId() != null){
                 commentWriterId = comment.getParentId().getMemberId().getId();
             }else{
