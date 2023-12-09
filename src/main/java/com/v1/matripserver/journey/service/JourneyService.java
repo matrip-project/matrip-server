@@ -41,7 +41,7 @@ public class JourneyService {
     private final MemberService memberService;
 
     // 동행 게시글 작성
-    public void createJourney(JourneyRequestDto journeyRequestDto) {
+    public Long createJourney(JourneyRequestDto journeyRequestDto) {
 
         Member member = memberService.getMemberById(journeyRequestDto.getMemberId());
 
@@ -81,6 +81,8 @@ public class JourneyService {
         if (!journeyImgList.isEmpty()){
             jourenyImgRepository.saveAll(journeyImgList);
         }
+
+        return journey.getId();
     }
 
     // 동행 게시글 조회
