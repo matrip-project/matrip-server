@@ -34,8 +34,8 @@ public class JourneyController {
     @PostMapping("")
     public ResponseEntity<?> createJourney(@RequestBody JourneyRequestDto journeyRequestDto){
 
-        journeyService.createJourney(journeyRequestDto);
-        return ResponseEntity.ok().build();
+        Long journeyId = journeyService.createJourney(journeyRequestDto);
+        return ResponseEntity.ok(journeyId);
     }
 
     // 동행 게시글 조회

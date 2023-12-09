@@ -25,6 +25,7 @@ public class CommentResponseDto {
     private LocalDateTime createAt;
 
     private Long memberId;
+    private Long parentId;
     private String memberName;
     private String memberEmail;
 }
