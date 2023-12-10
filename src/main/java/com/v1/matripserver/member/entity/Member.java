@@ -50,10 +50,10 @@ public class Member extends BaseEntity {
     @Column(name = "auth", nullable = false)
     private Auth auth;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MemberLink> memberLinkList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<MemberProfile> memberProfileList = new ArrayList<>();
 
     public void setNickname(String nickname) {
