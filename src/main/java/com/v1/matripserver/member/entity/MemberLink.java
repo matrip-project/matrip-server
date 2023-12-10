@@ -1,5 +1,6 @@
 package com.v1.matripserver.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.v1.matripserver.util.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,8 +17,9 @@ public class MemberLink {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @JsonIgnore
     private Member member;
 
     @Column(name = "path", nullable = false)
