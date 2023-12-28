@@ -22,8 +22,10 @@ public enum BaseResponseStatus {
 
     // ----- User-related Responses -----
     DUPLICATED_EMAIL(false, HttpStatus.CONFLICT.value(), "이미 사용 중인 이메일입니다."),
-    DUPLICATED_NICKNAME(false, HttpStatus.CONFLICT.value(), "이미 사용중인 닉네임입니다.");
+    DUPLICATED_NICKNAME(false, HttpStatus.CONFLICT.value(), "이미 사용중인 닉네임입니다."),
 
+    // ----- Journey Responses -----
+    NO_REQUIRED_IMG(false, HttpStatus.BAD_REQUEST.value(), "이미지가 누락되었습니다.");
 
     private final boolean isSuccess;
     private final int code;
