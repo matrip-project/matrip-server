@@ -85,7 +85,7 @@ public class JourneyService {
             jourenyImgRepository.saveAll(journeyImgList);
         }else{
             log.error("이미지가 누락되었습니다.");
-            throw new CustomException(BaseResponseStatus.NO_REQUIRED_IMG, HttpStatus.EXPECTATION_FAILED);
+            throw new CustomException(BaseResponseStatus.NO_REQUIRED_IMG, HttpStatus.BAD_REQUEST);
         }
 
         return journey.getId();
