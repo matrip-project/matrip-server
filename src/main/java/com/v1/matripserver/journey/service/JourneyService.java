@@ -279,7 +279,9 @@ public class JourneyService {
     }
 
     public Journey findJourney(Long id){
-        return journeyRepository.findById(id).orElseThrow();
+        return journeyRepository.findById(id).orElseThrow(
+            () -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND)
+        );
     }
 
     public List<JourneyResponseDto> myPageReadJourney(Long memberId){
