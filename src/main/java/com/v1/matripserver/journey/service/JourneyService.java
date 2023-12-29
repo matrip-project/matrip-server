@@ -10,6 +10,7 @@ import java.util.function.Function;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.v1.matripserver.journey.dto.JourneyImgRequestDto;
@@ -25,6 +26,8 @@ import com.v1.matripserver.journey.repository.JourneyRepository;
 import com.v1.matripserver.member.entity.Member;
 import com.v1.matripserver.member.service.MemberService;
 import com.v1.matripserver.util.entity.Status;
+import com.v1.matripserver.util.exceptions.BaseResponseStatus;
+import com.v1.matripserver.util.exceptions.CustomException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -80,6 +83,9 @@ public class JourneyService {
 
         if (!journeyImgList.isEmpty()){
             jourenyImgRepository.saveAll(journeyImgList);
+        }else{
+            log.error("이미지가 누락되었습니다.");
+            throw new CustomException(BaseResponseStatus.NO_REQUIRED_IMG, HttpStatus.BAD_REQUEST);
         }
 
         return journey.getId();
@@ -184,16 +190,9 @@ public class JourneyService {
     // 동행 게시글 삭제
     public void deleteJourney(Long id){
 
-        try {
-
-            Journey journey = journeyRepository.findById(id).get();
-            journey.setStatus(Status.DELETED);
-
-            journeyRepository.save(journey);
-        }catch (Exception e){
-
-            throw new RuntimeException("" + e.getMessage(), e);
-        }
+        Journey journey = journeyRepository.findById(id).orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
+        journey.setStatus(Status.DELETED);
+        journeyRepository.save(journey);
     }
 
     // 동행 게시글 수정
@@ -280,7 +279,7 @@ public class JourneyService {
     }
 
     public Journey findJourney(Long id){
-        return journeyRepository.findById(id).get();
+        return journeyRepository.findById(id).orElseThrow();
     }
 
     public List<JourneyResponseDto> myPageReadJourney(Long memberId){
