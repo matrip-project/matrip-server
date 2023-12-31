@@ -93,45 +93,55 @@ public class JourneyService {
 
     // 동행 게시글 조회
     public PageResponseDTO<JourneyResponseDto, Object[]> readJourneyList(PageRequestDTO pageRequestDTO){
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
 
-        int startYear = 0;
-        int endYear = 0;
+        try {
 
-        if (pageRequestDTO.getAge() != null){
-            endYear = LocalDate.now().getYear() - pageRequestDTO.getAge();
-            startYear = endYear - 9;
-        }
+            Pageable pageable = pageRequestDTO.getPageable(Sort.by("id").descending());
 
-        // 검색할 시작 연도와 끝 연도 계산
-        Page<Object []> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(), pageRequestDTO.getCity(),
-            pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()), startYear, endYear);
+            int startYear = 0;
+            int endYear = 0;
 
-        Function<Object [], JourneyResponseDto> fn = (arr -> {
-            Journey journey = Journey.builder()
-                .id((Long) arr[0])
-                .title((String) arr[1])
-                .city((String) arr[2])
-                .status((Status) arr[3])
-                .startDate((LocalDate) arr[4])
-                .endDate((LocalDate) arr[5])
-                .member((Member) arr[6])
-                .build();
-
-            JourneyImg journeyImg = (JourneyImg) arr[7];
-
-            Integer count = ((Long) arr[8]).intValue();
-
-            if (journeyImg == null) {
-                // ProductImage가 없는 경우에 대한 처리
-                return entitiesToDTO(journey, Collections.emptyList(), count);
-            } else {
-                // ProductImage가 있는 경우에 대한 처리
-                return entitiesToDTO(journey, Collections.singletonList(journeyImg), count);
+            if (pageRequestDTO.getAge() != null) {
+                endYear = LocalDate.now().getYear() - pageRequestDTO.getAge();
+                startYear = endYear - 9;
             }
-        });
 
-        return new PageResponseDTO<>(result, fn);
+            // 검색할 시작 연도와 끝 연도 계산
+            Page<Object[]> result = journeyRepository.readJourneyList(pageable, pageRequestDTO.getKeyword(),
+                pageRequestDTO.getCity(),
+                pageRequestDTO.getStartDate(), pageRequestDTO.getEndDate(), Status.valueOf(pageRequestDTO.getStatus()),
+                startYear, endYear);
+
+            Function<Object[], JourneyResponseDto> fn = (arr -> {
+                Journey journey = Journey.builder()
+                    .id((Long)arr[0])
+                    .title((String)arr[1])
+                    .city((String)arr[2])
+                    .status((Status)arr[3])
+                    .startDate((LocalDate)arr[4])
+                    .endDate((LocalDate)arr[5])
+                    .member((Member)arr[6])
+                    .build();
+
+                JourneyImg journeyImg = (JourneyImg)arr[7];
+
+                Integer count = ((Long)arr[8]).intValue();
+
+                if (journeyImg == null) {
+                    // ProductImage가 없는 경우에 대한 처리
+                    return entitiesToDTO(journey, Collections.emptyList(), count);
+                } else {
+                    // ProductImage가 있는 경우에 대한 처리
+                    return entitiesToDTO(journey, Collections.singletonList(journeyImg), count);
+                }
+            });
+
+            return new PageResponseDTO<>(result, fn);
+        }catch (Exception e){
+
+            log.error("조회에 실패했습니다: " + e.getMessage(), e);
+            throw new CustomException(BaseResponseStatus.COMMON_READ_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 검색 결과 반환
@@ -172,27 +182,40 @@ public class JourneyService {
     // 동행 게시글 상세 조회
     public JourneyResponseDto readJourney(Long id){
 
-        List<Object []> result = journeyRepository.readJourney(id);
+        try {
+            List<Object[]> result = journeyRepository.readJourney(id);
 
-        Journey journey = (Journey)result.get(0)[0];
-        Integer commentCount = Math.toIntExact((Long)result.get(0)[2]);
+            Journey journey = (Journey)result.get(0)[0];
+            Integer commentCount = Math.toIntExact((Long)result.get(0)[2]);
 
-        List<JourneyImg> journeyImgList = new ArrayList<>();
+            List<JourneyImg> journeyImgList = new ArrayList<>();
 
-        result.forEach(arr -> {
-            JourneyImg journeyImg = (JourneyImg) arr[1];
-            journeyImgList.add(journeyImg);
-        });
+            result.forEach(arr -> {
+                JourneyImg journeyImg = (JourneyImg)arr[1];
+                journeyImgList.add(journeyImg);
+            });
 
-        return entitiesToDTO(journey, journeyImgList, commentCount);
+            return entitiesToDTO(journey, journeyImgList, commentCount);
+        }catch (Exception e) {
+
+            log.error("조회에 실패했습니다: " + e.getMessage(), e);
+            throw new CustomException(BaseResponseStatus.COMMON_READ_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 동행 게시글 삭제
     public void deleteJourney(Long id){
 
-        Journey journey = journeyRepository.findById(id).orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
-        journey.setStatus(Status.DELETED);
-        journeyRepository.save(journey);
+        try {
+            Journey journey = journeyRepository.findById(id)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
+            journey.setStatus(Status.DELETED);
+            journeyRepository.save(journey);
+        }catch (Exception e){
+
+            log.error("삭제에 실패했습니다: " + e.getMessage(), e);
+            throw new CustomException(BaseResponseStatus.COMMON_DELETE_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 동행 게시글 수정
@@ -274,73 +297,90 @@ public class JourneyService {
             jourenyImgRepository.saveAll(journeyImgList);
         }catch (Exception e){
 
-            throw new RuntimeException("" + e.getMessage(), e);
+            log.error("수정에 실패했습니다: " + e.getMessage(), e);
+            throw new CustomException(BaseResponseStatus.COMMON_UPDATE_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public Journey findJourney(Long id){
-        return journeyRepository.findById(id).orElseThrow();
+        return journeyRepository.findById(id).orElseThrow(
+            () -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND)
+        );
     }
 
+    // 내가 작성한 글 조회
     public List<JourneyResponseDto> myPageReadJourney(Long memberId){
 
-        List<Object[]> result = journeyRepository.readMyPageJourney(memberId);
+        try {
+            List<Object[]> result = journeyRepository.readMyPageJourney(memberId);
 
-        List<JourneyResponseDto> journeyResponseDtoList = new ArrayList<>();
+            List<JourneyResponseDto> journeyResponseDtoList = new ArrayList<>();
 
-        for (Object[] arr : result){
-            Journey journey = Journey.builder()
-                .id((Long) arr[0])
-                .title((String) arr[1])
-                .city((String) arr[2])
-                .status((Status) arr[3])
-                .startDate((LocalDate) arr[4])
-                .endDate((LocalDate) arr[5])
-                .member((Member) arr[6])
-                .build();
+            for (Object[] arr : result) {
+                Journey journey = Journey.builder()
+                    .id((Long)arr[0])
+                    .title((String)arr[1])
+                    .city((String)arr[2])
+                    .status((Status)arr[3])
+                    .startDate((LocalDate)arr[4])
+                    .endDate((LocalDate)arr[5])
+                    .member((Member)arr[6])
+                    .build();
 
-            JourneyImg journeyImg = (JourneyImg) arr[7];
+                JourneyImg journeyImg = (JourneyImg)arr[7];
 
-            if (journeyImg == null) {
-                // ProductImage가 없는 경우에 대한 처리
-                journeyResponseDtoList.add(entitiesToDTO(journey, Collections.emptyList(), 0));
-            } else {
-                // ProductImage가 있는 경우에 대한 처리
-                journeyResponseDtoList.add(entitiesToDTO(journey, Collections.singletonList(journeyImg), 0));
+                if (journeyImg == null) {
+                    // ProductImage가 없는 경우에 대한 처리
+                    journeyResponseDtoList.add(entitiesToDTO(journey, Collections.emptyList(), 0));
+                } else {
+                    // ProductImage가 있는 경우에 대한 처리
+                    journeyResponseDtoList.add(entitiesToDTO(journey, Collections.singletonList(journeyImg), 0));
+                }
             }
-        }
 
-        return journeyResponseDtoList;
+            return journeyResponseDtoList;
+        }catch (Exception e){
+
+            log.error("조회에 실패했습니다: " + e.getMessage(), e);
+            throw new CustomException(BaseResponseStatus.COMMON_READ_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    // 인기 여행지 조회
     public List<JourneyResponseDto> interestReadJourney(Long memberId) {
 
-        List<Object[]> result = journeyRepository.readInterestJourney(memberId);
+        try {
+            List<Object[]> result = journeyRepository.readInterestJourney(memberId);
 
-        List<JourneyResponseDto> journeyResponseDtoList = new ArrayList<>();
+            List<JourneyResponseDto> journeyResponseDtoList = new ArrayList<>();
 
-        for (Object[] arr : result){
-            Journey journey = Journey.builder()
-                .id((Long) arr[0])
-                .title((String) arr[1])
-                .city((String) arr[2])
-                .status((Status) arr[3])
-                .startDate((LocalDate) arr[4])
-                .endDate((LocalDate) arr[5])
-                .member((Member) arr[6])
-                .build();
+            for (Object[] arr : result) {
+                Journey journey = Journey.builder()
+                    .id((Long)arr[0])
+                    .title((String)arr[1])
+                    .city((String)arr[2])
+                    .status((Status)arr[3])
+                    .startDate((LocalDate)arr[4])
+                    .endDate((LocalDate)arr[5])
+                    .member((Member)arr[6])
+                    .build();
 
-            JourneyImg journeyImg = (JourneyImg) arr[7];
+                JourneyImg journeyImg = (JourneyImg)arr[7];
 
-            if (journeyImg == null) {
-                // ProductImage가 없는 경우에 대한 처리
-                journeyResponseDtoList.add(entitiesToDTO(journey, Collections.emptyList(), 0));
-            } else {
-                // ProductImage가 있는 경우에 대한 처리
-                journeyResponseDtoList.add(entitiesToDTO(journey, Collections.singletonList(journeyImg), 0));
+                if (journeyImg == null) {
+                    // ProductImage가 없는 경우에 대한 처리
+                    journeyResponseDtoList.add(entitiesToDTO(journey, Collections.emptyList(), 0));
+                } else {
+                    // ProductImage가 있는 경우에 대한 처리
+                    journeyResponseDtoList.add(entitiesToDTO(journey, Collections.singletonList(journeyImg), 0));
+                }
             }
-        }
 
-        return journeyResponseDtoList;
+            return journeyResponseDtoList;
+        }catch (Exception e){
+
+            log.error("조회에 실패했습니다: " + e.getMessage(), e);
+            throw new CustomException(BaseResponseStatus.COMMON_READ_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.v1.matripserver.comment.dto.CommentRequestDto;
@@ -30,15 +31,15 @@ public class CommentController {
     
     // 댓글 작성
     @PostMapping("")
-    public ResponseEntity<?> createComment(@RequestBody CommentRequestDto commentRequestDto){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void createComment(@RequestBody CommentRequestDto commentRequestDto){
 
         commentService.createComment(commentRequestDto);
-        return ResponseEntity.ok().build();
     }
 
     // 댓글 조회
     @GetMapping("")
-    public ResponseEntity<?> readComment(CommentRequestDto commentRequestDto) {
+    public ResponseEntity<List<CommentResponseDto>> readComment(CommentRequestDto commentRequestDto) {
 
         List<CommentResponseDto> commentResponseDtoList = commentService.readComment(commentRequestDto);
         return ResponseEntity.ok(commentResponseDtoList);
@@ -46,16 +47,16 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteComment(@PathVariable Long id){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteComment(@PathVariable Long id){
 
         commentService.deleteComment(id);
-        return ResponseEntity.ok().build();
     }
 
     // 댓글 수정
     @PutMapping("")
-    public ResponseEntity<?> updateComment(@RequestBody CommentRequestDto commentRequestDto){
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateComment(@RequestBody CommentRequestDto commentRequestDto){
         commentService.updateComment(commentRequestDto);
-        return ResponseEntity.ok().build();
     }
 }
