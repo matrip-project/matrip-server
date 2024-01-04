@@ -3,6 +3,9 @@ package com.v1.matripserver.member.service;
 import com.v1.matripserver.member.dto.RequestDto;
 import com.v1.matripserver.member.dto.ResponseDto;
 import com.v1.matripserver.member.entity.Member;
+import com.v1.matripserver.member.entity.MemberLink;
+
+import java.util.List;
 
 import static com.v1.matripserver.member.dto.RequestDto.*;
 
@@ -27,6 +30,8 @@ public interface MemberService {
     void addProfile(Long memberId, AddProfileDto addProfileDto);
 
     void addLink(Long memberId, AddLinkDto addLinkDto);
+
+    List<MemberLink> addAndGetLink(Long memberId, AddLinkDto addLinkDto);
 
     void deleteProfile(Long profileId);
 
