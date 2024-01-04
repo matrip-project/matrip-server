@@ -2,12 +2,15 @@ package com.v1.matripserver.member.controller;
 
 import com.v1.matripserver.member.dto.RequestDto;
 import com.v1.matripserver.member.dto.ResponseDto;
+import com.v1.matripserver.member.entity.MemberLink;
 import com.v1.matripserver.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Member 도메인", description = "사용자 CRUD API")
 @RestController
@@ -84,14 +87,13 @@ public class MemberController {
 
     @Operation(summary = "사용자 소셜 링크 추가")
     @PostMapping("/member/{memberId}/link")
-    public ResponseEntity<?> addLink (
+    public ResponseEntity<List<MemberLink>> addLink (
             @PathVariable
             Long memberId,
             @RequestBody
             RequestDto.AddLinkDto addLinkDto
     ) {
-        memberService.addLink(memberId, addLinkDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(memberService.addAndGetLink(memberId, addLinkDto));
     }
 
     @Operation(summary = "사용자 소셜 링크 삭제")

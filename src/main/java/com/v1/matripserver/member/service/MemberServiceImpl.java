@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 import static com.v1.matripserver.member.dto.RequestDto.*;
 
 @Service
@@ -152,6 +154,16 @@ public class MemberServiceImpl implements MemberService {
                 .member(member)
                 .path(addLinkDto.path())
                 .build());
+    }
+
+    @Override
+    public List<MemberLink> addAndGetLink(Long memberId, AddLinkDto addLinkDto) {
+        addLink(memberId, addLinkDto);
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+        return member.getMemberLinkList();
     }
 
     @Override
