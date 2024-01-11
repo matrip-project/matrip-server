@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,18 +40,18 @@ public class CommentController {
 
     // 댓글 조회
     @GetMapping("")
-    public ResponseEntity<List<CommentResponseDto>> readComment(CommentRequestDto commentRequestDto) {
+    public ResponseEntity<List<CommentResponseDto>> readComment(CommentRequestDto commentRequestDto, @RequestHeader(value = "Authorization") String accessToken) {
 
-        List<CommentResponseDto> commentResponseDtoList = commentService.readComment(commentRequestDto);
+        List<CommentResponseDto> commentResponseDtoList = commentService.readComment(commentRequestDto, accessToken);
         return ResponseEntity.ok(commentResponseDtoList);
     }
 
     // 댓글 삭제
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable Long id){
+    public void deleteComment(@PathVariable Long id, @RequestHeader(value = "Authorization") String accessToken){
 
-        commentService.deleteComment(id);
+        commentService.deleteComment(id, accessToken);
     }
 
     // 댓글 수정

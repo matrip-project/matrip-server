@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.v1.matripserver.auth.JwtTokenUtil;
 import com.v1.matripserver.comment.dto.CommentRequestDto;
 import com.v1.matripserver.comment.dto.CommentResponseDto;
 import com.v1.matripserver.comment.entity.Comment;
@@ -33,6 +34,8 @@ public class CommentService {
     private final JourneyService journeyService;
 
     private final MemberService memberService;
+
+    private static String secretKey = "test001";
 
     // 댓글 작성
     public void createComment(CommentRequestDto commentRequestDto){
@@ -80,11 +83,13 @@ public class CommentService {
     }
 
     // 댓글 조회
-    public List<CommentResponseDto> readComment(CommentRequestDto commentRequestDto){
+    public List<CommentResponseDto> readComment(CommentRequestDto commentRequestDto, String token){
 
         try {
             Long journeyId = commentRequestDto.getJourneyId();
             List<Comment> commentList = commentRepository.readComment(journeyId);
+            String memberEmail = JwtTokenUtil.getLoginId(token, secretKey);
+            Member member = memberService.getMemberByEmail(memberEmail);
 
             // 변수 선언
             Long commentWriterId;
@@ -112,9 +117,9 @@ public class CommentService {
                 // 비밀 댓글일 때
                 if (comment.isSecret()) {
                     // 댓글 작성자 혹은 게시글 작성자일 때
-                    log.info(comment.getId() + " " + commentWriterId);
-                    if (commentWriterId.equals(commentRequestDto.getMemberId()) || journeyWriterId.equals(
-                        commentRequestDto.getMemberId())) {
+                    log.info(comment.getMemberId() + " " + commentWriterId);
+                    if (commentWriterId.equals(member.getId()) || journeyWriterId.equals(
+                        member.getId())) {
                         commentResponseDto = entityToDto(comment.getId(), comment.getContent(),
                             comment.isSecret(), comment.getCreated(), parentId, comment.getMemberId());
                         // 제 3자일 때
@@ -156,10 +161,11 @@ public class CommentService {
     }
 
     // 댓글 삭제
-    public void deleteComment(Long id){
+    public void deleteComment(Long id, String token){
 
         try {
             Comment comment = commentRepository.findById(id).orElseThrow(() -> new CustomException(BaseResponseStatus.COMMON_NOT_FOUND, HttpStatus.NOT_FOUND));
+            String memberEmail = JwtTokenUtil.getLoginId(token, secretKey);
             comment.setStatus(Status.DELETED);
 
             commentRepository.save(comment);
