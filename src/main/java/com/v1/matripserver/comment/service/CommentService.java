@@ -112,7 +112,7 @@ public class CommentService {
                 // 비밀 댓글일 때
                 if (comment.isSecret()) {
                     // 댓글 작성자 혹은 게시글 작성자일 때
-                    log.info(comment.getId() + " " + commentWriterId);
+                    log.info(comment.getMemberId() + " " + commentWriterId);
                     if (commentWriterId.equals(commentRequestDto.getMemberId()) || journeyWriterId.equals(
                         commentRequestDto.getMemberId())) {
                         commentResponseDto = entityToDto(comment.getId(), comment.getContent(),
